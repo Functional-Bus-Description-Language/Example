@@ -50,10 +50,10 @@ def array_test(Main):
     Main.CA.write(data)
 
     rdata = Main.CA.read()
-    assert rdata == data, f"invalid data read, got {rdata}, want {data}"
+    assert rdata == data, f"got {rdata}, want {data}"
 
     rdata = Main.SA.read()
-    assert rdata == data, f"invalid data read, got {rdata}, want {data}"
+    assert rdata == data, f"got {rdata}, want {data}"
 
     print("Array Test Passed\n")
 

@@ -44,32 +44,37 @@ def write_read_test(Main):
 def array_test(Main):
     print("\n\nPerforming Array Test")
 
-    max = 2 ** 8 - 1
+    data = []
+    for _ in range(10):
+        data.append(randint(0, 2 ** 8 - 1))
 
     for i in range(len(Main.CA4)):
-        r = randint(0, max)
-        Main.CA4[i].Item0.write(r)
-        assert Main.SA4[i].Item0.read() == r
+        Main.CA4[i].Item0.write(data[0 + i * 4])
+        Main.CA4[i].Item1.write(data[1 + i * 4])
+        Main.CA4[i].Item2.write(data[2 + i * 4])
+        Main.CA4[i].Item3.write(data[3 + i * 4])
+    Main.CA2.Item0.write(data[8])
+    Main.CA2.Item1.write(data[9])
 
-        r = randint(0, max)
-        Main.CA4[i].Item1.write(r)
-        assert Main.SA4[i].Item1.read() == r
+    rdata = []
+    for i in range(len(Main.CA4)):
+        rdata.append(Main.CA4[i].Item0.read())
+        rdata.append(Main.CA4[i].Item1.read())
+        rdata.append(Main.CA4[i].Item2.read())
+        rdata.append(Main.CA4[i].Item3.read())
+    rdata.append(Main.CA2.Item0.read())
+    rdata.append(Main.CA2.Item1.read())
+    assert rdata == data, f"got {rdata}, want {data}"
 
-        r = randint(0, max)
-        Main.CA4[i].Item2.write(r)
-        assert Main.SA4[i].Item2.read() == r
-
-        r = randint(0, max)
-        Main.CA4[i].Item3.write(r)
-        assert Main.SA4[i].Item3.read() == r
-
-    r = randint(0, max)
-    Main.CA2.Item0.write(r)
-    assert Main.SA2.Item0.read() == r
-
-    r = randint(0, max)
-    Main.CA2.Item1.write(r)
-    assert Main.SA2.Item1.read() == r
+    rdata = []
+    for i in range(len(Main.SA4)):
+        rdata.append(Main.SA4[i].Item0.read())
+        rdata.append(Main.SA4[i].Item1.read())
+        rdata.append(Main.SA4[i].Item2.read())
+        rdata.append(Main.SA4[i].Item3.read())
+    rdata.append(Main.SA2.Item0.read())
+    rdata.append(Main.SA2.Item1.read())
+    assert rdata == data, f"got {rdata}, want {data}"
 
     print("Array Test Passed\n")
 
