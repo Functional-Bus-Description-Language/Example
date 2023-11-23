@@ -1,0 +1,160 @@
+{
+	"Name": "Main",
+	"Doc": "",
+	"IsArray": false,
+	"Count": 1,
+	"Masters": 1,
+	"Reset": "",
+	"Width": 32,
+	"Sizes": {
+		"BlockAligned": 8,
+		"Compact": 7,
+		"Own": 7
+	},
+	"AddrSpace": {
+		"Start": 0,
+		"End": 7
+	},
+	"Consts": {
+		"Bools": null,
+		"BoolLists": null,
+		"Floats": null,
+		"Ints": null,
+		"IntLists": null,
+		"Strings": null
+	},
+	"Configs": [
+		{
+			"Name": "C1",
+			"Doc": "",
+			"IsArray": false,
+			"Count": 1,
+			"Atomic": true,
+			"InitValue": "",
+			"Groups": null,
+			"Range": null,
+			"ReadValue": "",
+			"ResetValue": "",
+			"Width": 7,
+			"Access": {
+				"Strategy": "Single",
+				"Addr": 1,
+				"StartBit": 0,
+				"EndBit": 6
+			}
+		},
+		{
+			"Name": "C2",
+			"Doc": "",
+			"IsArray": false,
+			"Count": 1,
+			"Atomic": true,
+			"InitValue": "",
+			"Groups": null,
+			"Range": null,
+			"ReadValue": "",
+			"ResetValue": "",
+			"Width": 9,
+			"Access": {
+				"Strategy": "Single",
+				"Addr": 2,
+				"StartBit": 0,
+				"EndBit": 8
+			}
+		},
+		{
+			"Name": "C3",
+			"Doc": "",
+			"IsArray": false,
+			"Count": 1,
+			"Atomic": true,
+			"InitValue": "",
+			"Groups": null,
+			"Range": null,
+			"ReadValue": "",
+			"ResetValue": "",
+			"Width": 12,
+			"Access": {
+				"Strategy": "Single",
+				"Addr": 3,
+				"StartBit": 0,
+				"EndBit": 11
+			}
+		}
+	],
+	"Irqs": null,
+	"Masks": null,
+	"Memories": null,
+	"Procs": null,
+	"Statics": [
+		{
+			"Name": "ID",
+			"Doc": "Bus identifier.",
+			"IsArray": false,
+			"Count": 1,
+			"Groups": null,
+			"InitValue": "x\"e2c709ee\"",
+			"ReadValue": "",
+			"ResetValue": "",
+			"Width": 32,
+			"Access": {
+				"Strategy": "Single",
+				"Addr": 0,
+				"StartBit": 0,
+				"EndBit": 31
+			}
+		}
+	],
+	"Statuses": [
+		{
+			"Name": "S1",
+			"Doc": "",
+			"IsArray": false,
+			"Count": 1,
+			"Atomic": true,
+			"Groups": null,
+			"ReadValue": "",
+			"Width": 7,
+			"Access": {
+				"Strategy": "Single",
+				"Addr": 6,
+				"StartBit": 0,
+				"EndBit": 6
+			}
+		},
+		{
+			"Name": "S2",
+			"Doc": "",
+			"IsArray": false,
+			"Count": 1,
+			"Atomic": true,
+			"Groups": null,
+			"ReadValue": "",
+			"Width": 9,
+			"Access": {
+				"Strategy": "Single",
+				"Addr": 5,
+				"StartBit": 0,
+				"EndBit": 8
+			}
+		},
+		{
+			"Name": "S3",
+			"Doc": "",
+			"IsArray": false,
+			"Count": 1,
+			"Atomic": true,
+			"Groups": null,
+			"ReadValue": "",
+			"Width": 12,
+			"Access": {
+				"Strategy": "Single",
+				"Addr": 4,
+				"StartBit": 0,
+				"EndBit": 11
+			}
+		}
+	],
+	"Streams": null,
+	"Subblocks": null
+}

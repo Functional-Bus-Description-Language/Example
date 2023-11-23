@@ -1,0 +1,16 @@
+CAPI=2:
+
+name: cern:general_cores:gc_sync_constr:0.0.0
+
+filesets:
+    vivado_constr:
+        files:
+            - constr/gc_sync.xdc : {file_type : xdc}
+
+    tcl:
+        files:
+            - constr/gc_sync.tcl : {file_type : tclSource}
+
+targets:
+    default:
+        filesets: ["tool_vivado? (vivado_constr)", tcl]

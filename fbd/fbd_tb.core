@@ -1,0 +1,24 @@
+CAPI=2:
+
+name: ::fbd_tb
+
+filesets:
+  vfbdb_dep:
+    depend:
+      - fbdl::vfbdb
+
+generate:
+  regs:
+    generator: vfbdb
+    parameters:
+      vhdl-wb3: ['-path', '../autogen/fbdl/vhdl/']
+      python: ['-path', '../autogen/fbdl/python/']
+      json: ['-path', '../autogen/fbdl/']
+      main: bus.fbd
+
+targets:
+  default:
+    filesets:
+      - vfbdb_dep
+    generate:
+      - regs

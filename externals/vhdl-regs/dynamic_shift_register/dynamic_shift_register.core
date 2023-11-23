@@ -1,0 +1,27 @@
+CAPI=2:
+
+name: mkru:vhdl-regs:dynamic_shift_register
+
+filesets:
+  src:
+    files:
+      - src/dynamic_shift_register.vhd
+    file_type: vhdlSource-2008
+    logical_name: regs
+
+  tb:
+    files:
+      - tb/tb_dynamic_shift_register.vhd
+    file_type: vhdlSource-2008
+
+targets:
+  default:
+    filesets:
+      - src
+
+  tb:
+    default_tool: ghdl
+    toplevel: tb_dynamic_shift_register
+    filesets:
+      - src
+      - tb

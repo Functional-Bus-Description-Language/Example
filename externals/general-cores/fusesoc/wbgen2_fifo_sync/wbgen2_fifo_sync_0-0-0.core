@@ -1,0 +1,17 @@
+CAPI=2:
+
+name: cern:general_cores:wbgen2_fifo_sync:0.0.0
+
+filesets:
+    rtl:
+        files:
+            - ../../modules/wishbone/wbgen2/wbgen2_fifo_sync.vhd
+        file_type: vhdlSource-93
+        logical_name: general_cores
+        depend:
+            - cern:general_cores:wbgen2_pkg:0.0.0
+
+targets:
+    default:
+        filesets:
+            - rtl

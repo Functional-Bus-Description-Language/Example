@@ -1,0 +1,29 @@
+CAPI=2:
+
+name: ::tb_fbdl
+
+filesets:
+  tb:
+    depend:
+      - ::fbd_tb
+      - ::cosim
+    files:
+      - tb_fbdl.vhd
+    file_type: vhdlSource-2008
+
+targets:
+  tb_cosim:
+    default_tool: ghdl
+    toplevel: tb
+    tools:
+      ghdl:
+        run_options: ["--backtrace-severity=warning"]
+    filesets:
+      - tb
+    hooks:
+      pre_run: [tb_cosim]
+
+scripts:
+  tb_cosim:
+    cmd:
+      - ../../../scripts/fbdl.sh

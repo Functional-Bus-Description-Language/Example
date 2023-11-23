@@ -1,0 +1,23 @@
+Main bus
+	C1 config; width = 7
+	C2 config; width = 9
+	C3 config; width = 12
+
+	S1 status; width = 7
+	S2 status; width = 9
+	S3 status; width = 12
+
+	CA [10]config; width = 8
+	SA [10]status; width = 8
+
+	Counter status; width = 32
+
+	Subblock block
+		Add proc
+			A param; width = 20
+			B param; width = 10
+			C param; width = 8
+		Sum status; width = 21
+
+	Mask    mask; width = 16
+	Version static; width = 3*8; init-value = 0x010102

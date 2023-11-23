@@ -1,0 +1,23 @@
+CAPI=2:
+
+name: ::agwb_tb
+
+filesets:
+  agwb_dep:
+    depend:
+        - wzab::addr_gen_wb
+
+generate:
+  regs:
+    generator: addr_gen_wb
+    parameters:
+      infile: bus.xml
+      hdl: ../autogen/agwb/vhdl
+      python: ../autogen/agwb/python
+
+targets:
+  default:
+    filesets:
+      - agwb_dep
+    generate:
+      - regs

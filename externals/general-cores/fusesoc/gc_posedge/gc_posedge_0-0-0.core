@@ -1,0 +1,15 @@
+CAPI=2:
+
+name: cern:general_cores:gc_posedge:0.0.0
+
+filesets:
+    rtl:
+        files:
+            - ../../modules/common/gc_posedge.vhd
+        file_type: vhdlSource-93
+        logical_name: general_cores
+
+targets:
+    default:
+        filesets:
+            - rtl

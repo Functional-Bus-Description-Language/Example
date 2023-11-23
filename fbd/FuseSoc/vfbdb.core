@@ -1,0 +1,20 @@
+CAPI=2:
+
+name: fbdl::vfbdb
+
+filesets:
+  rtl:
+    depend:
+      - cern:general_cores:xwb_register:0.0.0
+      - cern:general_cores:xwb_crossbar:0.0.0
+
+generators:
+  vfbdb:
+    interpreter: python3
+    command: vfbdb.py
+    description: Generator for versatile Functional Bus Description Language compiler backend.
+
+targets:
+  default:
+    filesets:
+      - rtl

@@ -1,0 +1,53 @@
+<sysdef top="Main">
+	<block name="Subblock_t">
+		<!-- Add0, Add1 and Sum registers are part of the addition procedure. -->
+		<creg name="Add0">
+			<field name="A" width="20"/>
+			<field name="B" width="10"/>
+		</creg>
+		<creg name="Add1" stb="1">
+			<field name="C" width="8"/>
+		</creg>
+		<sreg name="Sum" width = "21"/>
+	</block>
+
+	<block name="Main">
+		<creg name="C1" width = "7"/>
+		<creg name="C2" width = "9"/>
+		<creg name="C3" width = "12"/>
+
+		<sreg name="S1" width = "7"/>
+		<sreg name="S2" width = "9"/>
+		<sreg name="S3" width = "12"/>
+
+		<creg name="CA4" reps="2">
+			<field name="Item0" width="8"/>
+			<field name="Item1" width="8"/>
+			<field name="Item2" width="8"/>
+			<field name="Item3" width="8"/>
+		</creg>
+		<creg name="CA2">
+			<field name="Item0" width="8"/>
+			<field name="Item1" width="8"/>
+		</creg>
+
+		<sreg name="SA4" reps="2">
+			<field name="Item0" width="8"/>
+			<field name="Item1" width="8"/>
+			<field name="Item2" width="8"/>
+			<field name="Item3" width="8"/>
+		</sreg>
+		<sreg name="SA2">
+			<field name="Item0" width="8"/>
+			<field name="Item1" width="8"/>
+		</sreg>
+
+		<sreg name="Counter0" width = "32"/>
+		<sreg name="Counter1" width = "1"/>
+
+		<subblock name="Subblock" type="Subblock_t"/>
+
+		<creg name="Mask"   width = "16"/>
+		<sreg name="Version" width = "3*8"/>
+	</block>
+</sysdef>

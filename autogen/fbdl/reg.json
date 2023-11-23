@@ -1,0 +1,367 @@
+{
+	"Name": "Main",
+	"Doc": "",
+	"IsArray": false,
+	"Count": 1,
+	"Masters": 1,
+	"Reset": "",
+	"Width": 32,
+	"Sizes": {
+		"BlockAligned": 32,
+		"Compact": 16,
+		"Own": 13
+	},
+	"AddrSpace": {
+		"Start": 0,
+		"End": 31
+	},
+	"Consts": {
+		"Bools": null,
+		"BoolLists": null,
+		"Floats": null,
+		"Ints": null,
+		"IntLists": null,
+		"Strings": null
+	},
+	"Configs": [
+		{
+			"Name": "C1",
+			"Doc": "",
+			"IsArray": false,
+			"Count": 1,
+			"Atomic": true,
+			"InitValue": "",
+			"Groups": null,
+			"Range": null,
+			"ReadValue": "",
+			"ResetValue": "",
+			"Width": 7,
+			"Access": {
+				"Type": "SingleOneReg",
+				"Addr": 6,
+				"StartBit": 0,
+				"EndBit": 6
+			}
+		},
+		{
+			"Name": "C2",
+			"Doc": "",
+			"IsArray": false,
+			"Count": 1,
+			"Atomic": true,
+			"InitValue": "",
+			"Groups": null,
+			"Range": null,
+			"ReadValue": "",
+			"ResetValue": "",
+			"Width": 9,
+			"Access": {
+				"Type": "SingleOneReg",
+				"Addr": 5,
+				"StartBit": 0,
+				"EndBit": 8
+			}
+		},
+		{
+			"Name": "C3",
+			"Doc": "",
+			"IsArray": false,
+			"Count": 1,
+			"Atomic": true,
+			"InitValue": "",
+			"Groups": null,
+			"Range": null,
+			"ReadValue": "",
+			"ResetValue": "",
+			"Width": 12,
+			"Access": {
+				"Type": "SingleOneReg",
+				"Addr": 4,
+				"StartBit": 0,
+				"EndBit": 11
+			}
+		},
+		{
+			"Name": "CA",
+			"Doc": "",
+			"IsArray": true,
+			"Count": 10,
+			"Atomic": true,
+			"InitValue": "",
+			"Groups": null,
+			"Range": null,
+			"ReadValue": "",
+			"ResetValue": "",
+			"Width": 8,
+			"Access": {
+				"Type": "ArrayNInRegMInEndReg",
+				"RegCount": 3,
+				"ItemCount": 10,
+				"ItemWidth": 8,
+				"ItemsInReg": 4,
+				"ItemsInEndReg": 2,
+				"StartAddr": 1,
+				"StartBit": 0
+			}
+		}
+	],
+	"Irqs": null,
+	"Masks": [
+		{
+			"Name": "Mask",
+			"Doc": "",
+			"IsArray": false,
+			"Count": 1,
+			"Atomic": true,
+			"Groups": null,
+			"InitValue": "",
+			"ReadValue": "",
+			"ResetValue": "",
+			"Width": 16,
+			"Access": {
+				"Type": "SingleOneReg",
+				"Addr": 7,
+				"StartBit": 0,
+				"EndBit": 15
+			}
+		}
+	],
+	"Memories": null,
+	"Procs": null,
+	"Statics": [
+		{
+			"Name": "Version",
+			"Doc": "",
+			"IsArray": false,
+			"Count": 1,
+			"Groups": null,
+			"InitValue": "x\"010102\"",
+			"ReadValue": "",
+			"ResetValue": "",
+			"Width": 24,
+			"Access": {
+				"Type": "SingleOneReg",
+				"Addr": 8,
+				"StartBit": 0,
+				"EndBit": 23
+			}
+		},
+		{
+			"Name": "ID",
+			"Doc": "Bus identifier.",
+			"IsArray": false,
+			"Count": 1,
+			"Groups": null,
+			"InitValue": "x\"d2600e2f\"",
+			"ReadValue": "",
+			"ResetValue": "",
+			"Width": 32,
+			"Access": {
+				"Type": "SingleOneReg",
+				"Addr": 0,
+				"StartBit": 0,
+				"EndBit": 31
+			}
+		}
+	],
+	"Statuses": [
+		{
+			"Name": "S1",
+			"Doc": "",
+			"IsArray": false,
+			"Count": 1,
+			"Atomic": true,
+			"Groups": null,
+			"ReadValue": "",
+			"Width": 7,
+			"Access": {
+				"Type": "SingleOneReg",
+				"Addr": 8,
+				"StartBit": 24,
+				"EndBit": 30
+			}
+		},
+		{
+			"Name": "S2",
+			"Doc": "",
+			"IsArray": false,
+			"Count": 1,
+			"Atomic": true,
+			"Groups": null,
+			"ReadValue": "",
+			"Width": 9,
+			"Access": {
+				"Type": "SingleOneReg",
+				"Addr": 5,
+				"StartBit": 9,
+				"EndBit": 17
+			}
+		},
+		{
+			"Name": "S3",
+			"Doc": "",
+			"IsArray": false,
+			"Count": 1,
+			"Atomic": true,
+			"Groups": null,
+			"ReadValue": "",
+			"Width": 12,
+			"Access": {
+				"Type": "SingleOneReg",
+				"Addr": 4,
+				"StartBit": 12,
+				"EndBit": 23
+			}
+		},
+		{
+			"Name": "SA",
+			"Doc": "",
+			"IsArray": true,
+			"Count": 10,
+			"Atomic": true,
+			"Groups": null,
+			"ReadValue": "",
+			"Width": 8,
+			"Access": {
+				"Type": "ArrayNInRegMInEndReg",
+				"RegCount": 3,
+				"ItemCount": 10,
+				"ItemWidth": 8,
+				"ItemsInReg": 4,
+				"ItemsInEndReg": 2,
+				"StartAddr": 9,
+				"StartBit": 0
+			}
+		},
+		{
+			"Name": "Counter",
+			"Doc": "",
+			"IsArray": false,
+			"Count": 1,
+			"Atomic": true,
+			"Groups": null,
+			"ReadValue": "",
+			"Width": 32,
+			"Access": {
+				"Type": "SingleOneReg",
+				"Addr": 12,
+				"StartBit": 0,
+				"EndBit": 31
+			}
+		}
+	],
+	"Streams": null,
+	"Subblocks": [
+		{
+			"Name": "Subblock",
+			"Doc": "",
+			"IsArray": false,
+			"Count": 1,
+			"Masters": 1,
+			"Reset": "",
+			"Width": 32,
+			"Sizes": {
+				"BlockAligned": 4,
+				"Compact": 3,
+				"Own": 3
+			},
+			"AddrSpace": {
+				"Start": 28,
+				"End": 31
+			},
+			"Consts": {
+				"Bools": null,
+				"BoolLists": null,
+				"Floats": null,
+				"Ints": null,
+				"IntLists": null,
+				"Strings": null
+			},
+			"Configs": null,
+			"Irqs": null,
+			"Masks": null,
+			"Memories": null,
+			"Procs": [
+				{
+					"Name": "Add",
+					"Doc": "",
+					"IsArray": false,
+					"Count": 1,
+					"Delay": null,
+					"Params": [
+						{
+							"Name": "A",
+							"Doc": "",
+							"IsArray": false,
+							"Count": 1,
+							"Groups": null,
+							"Range": null,
+							"Width": 20,
+							"Access": {
+								"Type": "SingleOneReg",
+								"Addr": 0,
+								"StartBit": 0,
+								"EndBit": 19
+							}
+						},
+						{
+							"Name": "B",
+							"Doc": "",
+							"IsArray": false,
+							"Count": 1,
+							"Groups": null,
+							"Range": null,
+							"Width": 10,
+							"Access": {
+								"Type": "SingleOneReg",
+								"Addr": 0,
+								"StartBit": 20,
+								"EndBit": 29
+							}
+						},
+						{
+							"Name": "C",
+							"Doc": "",
+							"IsArray": false,
+							"Count": 1,
+							"Groups": null,
+							"Range": null,
+							"Width": 8,
+							"Access": {
+								"Type": "SingleNRegs",
+								"RegCount": 2,
+								"StartAddr": 0,
+								"StartBit": 30,
+								"EndBit": 5
+							}
+						}
+					],
+					"Returns": null,
+					"CallAddr": 1,
+					"ExitAddr": null
+				}
+			],
+			"Statics": null,
+			"Statuses": [
+				{
+					"Name": "Sum",
+					"Doc": "",
+					"IsArray": false,
+					"Count": 1,
+					"Atomic": true,
+					"Groups": null,
+					"ReadValue": "",
+					"Width": 21,
+					"Access": {
+						"Type": "SingleOneReg",
+						"Addr": 2,
+						"StartBit": 0,
+						"EndBit": 20
+					}
+				}
+			],
+			"Streams": null,
+			"Subblocks": null
+		}
+	]
+}

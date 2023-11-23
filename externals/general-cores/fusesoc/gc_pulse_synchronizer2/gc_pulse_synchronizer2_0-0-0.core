@@ -1,0 +1,18 @@
+CAPI=2:
+
+name: cern:general_cores:gc_pulse_synchronizer2:0.0.0
+
+filesets:
+    rtl:
+        files:
+            - ../../modules/common/gc_pulse_synchronizer2.vhd
+        file_type: vhdlSource-93
+        logical_name: general_cores
+        depend:
+            - cern:general_cores:gencores_pkg:0.0.0
+            - cern:general_cores:gc_sync_ffs:0.0.0
+
+targets:
+    default:
+        filesets:
+            - rtl
