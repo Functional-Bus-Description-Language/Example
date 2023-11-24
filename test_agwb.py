@@ -14,7 +14,7 @@ CLK_PERIOD = 50
 
 
 def delay():
-    return randint(3, 5) * CLK_PERIOD
+    return 3 * CLK_PERIOD
 
 
 iface = cosim.Iface(WRITE_FIFO_PATH, READ_FIFO_PATH, delay, True)
@@ -130,9 +130,6 @@ try:
     print("\n\nStarting Cosimulation\n")
 
     Main = agwb.Main(iface, 0)
-
-    #id = Main.ID.read()
-    #assert id == Main.ID.value, f"Read wrong ID {id}, expecting {Tb.ID.value}"
 
     write_read_test(Main)
     array_test(Main)

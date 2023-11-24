@@ -54,7 +54,7 @@ architecture sim of tb is
    signal sa4 : ut_SA4_array (1 downto 0);
    signal sa2 : t_SA2;
 
-   signal counter : unsigned(32 downto 0) := b"111111111111111111111111111111111";
+   signal counter : unsigned(32 downto 0) := b"111111111111111111111111100000110";
 
    signal add0 : t_add0;
    signal add1 : t_add1;
