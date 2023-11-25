@@ -24,6 +24,11 @@ type Add_out_t is record
    B : std_logic_vector(9 downto 0);
    C : std_logic_vector(7 downto 0);
    call : std_logic;
+   exitt : std_logic;
+end record;
+
+type Add_in_t is record
+   Sum : std_logic_vector(20 downto 0);
 end record;
 
 -- Stream types
@@ -56,7 +61,7 @@ port (
    slave_i : in  t_wishbone_slave_in_array (1 - 1 downto 0);
    slave_o : out t_wishbone_slave_out_array(1 - 1 downto 0);
    Add_o : out Add_out_t;
-   Sum_i : in std_logic_vector(20 downto 0)
+   Add_i : in Add_in_t
 );
 end entity;
 
@@ -92,7 +97,7 @@ port map (
 
 register_access : process (clk_i) is
 
-variable addr : natural range 0 to 3 - 1;
+variable addr : natural range 0 to 2 - 1;
 
 begin
 
@@ -106,6 +111,7 @@ master_in.err <= '0';
 -- Procs Calls Clear
 Add_o.call <= '0';
 -- Procs Exits Clear
+Add_o.exitt <= '0';
 -- Stream Strobes Clear
 
 transfer : if
@@ -115,7 +121,7 @@ transfer : if
    and master_in.rty = '0'
    and master_in.ack = '0'
 then
-   addr := to_integer(unsigned(master_out.adr(2 - 1 downto 0)));
+   addr := to_integer(unsigned(master_out.adr(1 - 1 downto 0)));
 
    -- First assume there is some kind of error.
    -- For example internal address is invalid or there is a try to write status.
@@ -149,14 +155,7 @@ then
       if master_out.we = '1' then
          Add_o.C(7 downto 2) <= master_out.dat(5 downto 0);
       end if;
-      master_in.dat(5 downto 0) <= Add_o.C(7 downto 2);
-
-      master_in.ack <= '1';
-      master_in.err <= '0';
-   end if;
-
-   if 2 <= addr and addr <= 2 then
-      master_in.dat(20 downto 0) <= Sum_i;
+      master_in.dat(5 downto 0) <= Add_o.C(7 downto 2);      master_in.dat(26 downto 6) <= Add_i.Sum;
 
 
       master_in.ack <= '1';
@@ -172,6 +171,12 @@ then
    end if;
 
    -- Proc Exits Set
+   Add_exit : if addr = 1 then
+      if master_out.we = '0' then
+         Add_o.exitt <= '1';
+      end if;
+   end if;
+
    -- Stream Strobes Set
 
 end if transfer;

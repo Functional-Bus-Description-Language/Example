@@ -42,10 +42,10 @@ architecture sim of tb is
 
    signal ca : slv_vector(9 downto 0)(7 downto 0);
 
-   signal counter : unsigned(31 downto 0) := (1 to 31 => '1', others => '0');
+   signal counter : unsigned(32 downto 0) := b"111111111111111111111111101110110";
 
-   signal add : add_out_t;
-   signal sum : std_logic_vector(20 downto 0);
+   signal add_out : add_out_t;
+   signal add_in  : add_in_t;
 
 begin
 
@@ -98,19 +98,19 @@ begin
       slave_i(0)=> subblock_wb_ms,
       slave_o(0)=> subblock_wb_sm,
 
-      Add_o => add,
-      Sum_i => sum
+      Add_o => add_out,
+      Add_i => add_in
    );
 
 
    Adder : process (clk) is
    begin
       if rising_edge(clk) then
-         if add.call then
-            sum <= std_logic_vector(
-               resize(unsigned(add.a), sum'length) +
-               resize(unsigned(add.b), sum'length) +
-               resize(unsigned(add.c), sum'length)
+         if add_out.call then
+            add_in.sum <= std_logic_vector(
+               resize(unsigned(add_out.a), add_in.sum'length) +
+               resize(unsigned(add_out.b), add_in.sum'length) +
+               resize(unsigned(add_out.c), add_in.sum'length)
             );
          end if;
       end if;

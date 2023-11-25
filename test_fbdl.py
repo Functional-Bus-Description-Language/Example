@@ -14,7 +14,7 @@ CLK_PERIOD = 50
 
 
 def delay():
-    return randint(3, 5) * CLK_PERIOD
+    return 3 * CLK_PERIOD
 
 
 iface = cosim.Iface(WRITE_FIFO_PATH, READ_FIFO_PATH, delay, True)
@@ -71,8 +71,8 @@ def add_test(Main):
     b = randint(0, 2 ** 10 - 1)
     c = randint(0, 2 ** 8 - 1)
 
-    Main.Subblock.Add(a, b, c)
-    assert Main.Subblock.Sum.read() == a + b + c
+    sum = Main.Subblock.Add(a, b, c)[0]
+    assert sum == a + b + c
 
     print("Add Test Passed\n")
 

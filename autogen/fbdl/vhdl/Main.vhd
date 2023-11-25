@@ -51,12 +51,12 @@ port (
    Subblock_master_o : out t_wishbone_master_out_array(0 downto 0);
    Subblock_master_i : in  t_wishbone_master_in_array(0 downto 0);
    Version_o : out std_logic_vector(23 downto 0) := x"010102";
-   ID_o : out std_logic_vector(31 downto 0) := x"d2600e2f";
+   ID_o : out std_logic_vector(31 downto 0) := x"d03e0dd9";
    S1_i : in std_logic_vector(6 downto 0);
    S2_i : in std_logic_vector(8 downto 0);
    S3_i : in std_logic_vector(11 downto 0);
    SA_i : in slv_vector(9 downto 0)(7 downto 0);
-   Counter_i : in std_logic_vector(31 downto 0);
+   Counter_i : in std_logic_vector(32 downto 0);
    C1_o : buffer std_logic_vector(6 downto 0);
    C2_o : buffer std_logic_vector(8 downto 0);
    C3_o : buffer std_logic_vector(11 downto 0);
@@ -68,12 +68,13 @@ end entity;
 
 architecture rtl of Main is
 
-constant C_ADDRESSES : t_wishbone_address_array(1 downto 0) := (0 => "00000000000000000000000000000000", 1 => "00000000000000000000000000011100");
-constant C_MASKS     : t_wishbone_address_array(1 downto 0) := (0 => "00000000000000000000000000010000", 1 => "00000000000000000000000000011100");
+constant C_ADDRESSES : t_wishbone_address_array(1 downto 0) := (0 => "00000000000000000000000000000000", 1 => "00000000000000000000000000011110");
+constant C_MASKS     : t_wishbone_address_array(1 downto 0) := (0 => "00000000000000000000000000010000", 1 => "00000000000000000000000000011110");
 
 signal master_out : t_wishbone_master_out;
 signal master_in  : t_wishbone_master_in;
 
+signal Counter_atomic : std_logic_vector(32 downto 32);
 
 begin
 
@@ -99,7 +100,7 @@ port map (
 
 register_access : process (clk_i) is
 
-variable addr : natural range 0 to 13 - 1;
+variable addr : natural range 0 to 14 - 1;
 
 begin
 
@@ -132,7 +133,7 @@ then
 
    -- Registers Access
    if 0 <= addr and addr <= 0 then
-      master_in.dat(31 downto 0) <= x"d2600e2f"; -- ID
+      master_in.dat(31 downto 0) <= x"d03e0dd9"; -- ID
 
 
       master_in.ack <= '1';
@@ -241,8 +242,16 @@ then
    end if;
 
    if 12 <= addr and addr <= 12 then
-      master_in.dat(31 downto 0) <= Counter_i;
 
+      Counter_atomic(32 downto 32) <= Counter_i(32 downto 32);
+      master_in.dat(31 downto 0) <= Counter_i(31 downto 0);
+
+      master_in.ack <= '1';
+      master_in.err <= '0';
+   end if;
+
+   if 13 <= addr and addr <= 13 then
+      master_in.dat(0 downto 0) <= Counter_atomic(32 downto 32);
 
       master_in.ack <= '1';
       master_in.err <= '0';

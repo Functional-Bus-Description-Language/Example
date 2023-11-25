@@ -185,7 +185,7 @@ class ReturnsProc():
         self.buf_iface = _BufferIface()
         self.buf_size, self.returns = create_mock_returns(self.buf_iface, returns_start_addr, returns)
 
-    def __call__(self, *args):
+    def __call__(self):
         if self.delay is not None:
             self.iface.write(self.call_addr, 0)
             if self.delay != 0:
@@ -199,6 +199,45 @@ class ReturnsProc():
         self.buf_iface.set_buf(buf)
         tup = [] # List to allow append but must be cast to tuple.
 
+        for ret in self.returns:
+            # NOTE: Groups are not yet supported so it is safe to immediately append.
+            tup.append(ret['Status'].read())
+
+        return tuple(tup)
+
+class ParamsAndReturnsProc():
+    def __init__(self, iface, params_start_addr, params, returns_start_addr, returns, delay):
+        self.iface = iface
+
+        self.params_start_addr = params_start_addr
+        self.params = params
+
+        self.returns_start_addr = returns_start_addr
+        self.returns_buf_iface = _BufferIface()
+        self.returns_buf_size, self.returns = create_mock_returns(self.returns_buf_iface, returns_start_addr, returns)
+
+        self.delay = delay
+
+    def __call__(self, *args):
+        assert len(args) == len(self.params), \
+            "{}() takes {} arguments but {} were given".format(self.__name__, len(self.params), len(args))
+
+        params_buf = pack_params(self.params, *args)
+        if len(params_buf) == 1:
+            self.iface.write(self.params_start_addr, params_buf[0])
+        else:
+            self.iface.writeb(self.params_start_addr, params_buf)
+
+        if self.delay is not None:
+            if self.delay != 0:
+                time.sleep(self.delay)
+
+        if self.returns_buf_size == 1:
+                returns_buf = [self.iface.read(self.returns_start_addr)]
+        else:
+            returns_buf = self.iface.readb(self.returns_start_addr, self.returns_buf_size)
+        self.returns_buf_iface.set_buf(returns_buf)
+        tup = [] # List to allow append but must be cast to tuple.
         for ret in self.returns:
             # NOTE: Groups are not yet supported so it is safe to immediately append.
             tup.append(ret['Status'].read())
@@ -647,12 +686,12 @@ class Main:
     def __init__(self, iface):
         self.iface = iface
         self.Version = StaticSingleOneReg(iface, 8, 0, 23, 0b0000000010000000100000010)
-        self.ID = StaticSingleOneReg(iface, 0, 0, 31, 0b011010010011000000000111000101111)
+        self.ID = StaticSingleOneReg(iface, 0, 0, 31, 0b011010000001111100000110111011001)
         self.S1 = StatusSingleOneReg(iface, 8, 24, 30)
         self.S2 = StatusSingleOneReg(iface, 5, 9, 17)
         self.S3 = StatusSingleOneReg(iface, 4, 12, 23)
         self.SA = StatusArrayNInRegMInEndReg(iface, 9, 0, 8, 10, 4)
-        self.Counter = StatusSingleOneReg(iface, 12, 0, 31)
+        self.Counter = StatusSingleNRegs(iface, 12, 2, (31, 0), (0, 0))
         self.C1 = ConfigSingleOneReg(iface, 6, 0, 6)
         self.C2 = ConfigSingleOneReg(iface, 5, 0, 8)
         self.C3 = ConfigSingleOneReg(iface, 4, 0, 11)
@@ -662,10 +701,11 @@ class Main:
     class SubblockClass:
         def __init__(self, iface):
             self.iface = iface
-            self.Sum = StatusSingleOneReg(iface, 30, 0, 20)
-            self.Add = ParamsProc(iface, 28, [
-                    {'Name': 'A', 'Width': 20, 'Access': {'StartAddr': 0, 'StartBit': 0, 'EndBit': 19, 'RegCount': 1, 'Type': 'SingleOneReg'},},
-                    {'Name': 'B', 'Width': 10, 'Access': {'StartAddr': 0, 'StartBit': 20, 'EndBit': 29, 'RegCount': 1, 'Type': 'SingleOneReg'},},
-                    {'Name': 'C', 'Width': 8, 'Access': {'StartAddr': 0, 'StartBit': 30, 'EndBit': 5, 'RegCount': 2, 'Type': 'SingleNRegs'},},
-                ], None, None)
+            self.Add = ParamsAndReturnsProc(iface, 30, [
+                    {'Name': 'A', 'Width': 20, 'Access': {'StartAddr': 30, 'StartBit': 0, 'EndBit': 19, 'RegCount': 1, 'Type': 'SingleOneReg'},},
+                    {'Name': 'B', 'Width': 10, 'Access': {'StartAddr': 30, 'StartBit': 20, 'EndBit': 29, 'RegCount': 1, 'Type': 'SingleOneReg'},},
+                    {'Name': 'C', 'Width': 8, 'Access': {'StartAddr': 30, 'StartBit': 30, 'EndBit': 5, 'RegCount': 2, 'Type': 'SingleNRegs'},},
+                ], 31, [
+                    {'Name': 'Sum', 'Access': {'StartAddr': 31, 'StartBit': 6, 'EndBit': 26, 'RegCount': 1, 'Type': 'SingleOneReg'},},
+                ], None)
 
