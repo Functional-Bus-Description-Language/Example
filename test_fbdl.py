@@ -20,8 +20,8 @@ def delay():
 iface = cosim.Iface(WRITE_FIFO_PATH, READ_FIFO_PATH, delay, True)
 
 
-def write_read_test(Main):
-    print("\n\nPerforming Write Read Test")
+def single_data_test(Main):
+    print("\n\nPerforming Single Data Test")
 
     r = randint(0, 2 ** Main.C1.width - 1)
     Main.C1.write(r)
@@ -64,6 +64,17 @@ def counter_test(Main):
     print(f"counter = {cnt}")
 
 
+def add_test_zero(Main):
+    print("\n\nPerforming Add Test")
+
+    a = 0
+    b = 0
+    c = 0
+
+    assert Main.Subblock.Add(a, b, c)[0] == a + b + c
+
+    print("Add Test Passed\n")
+
 def add_test(Main):
     print("\n\nPerforming Add Test")
 
@@ -71,8 +82,7 @@ def add_test(Main):
     b = randint(0, 2 ** 10 - 1)
     c = randint(0, 2 ** 8 - 1)
 
-    sum = Main.Subblock.Add(a, b, c)[0]
-    assert sum == a + b + c
+    assert Main.Subblock.Add(a, b, c)[0] == a + b + c
 
     print("Add Test Passed\n")
 
@@ -83,7 +93,6 @@ def mask_test(Main):
     bits = [1, 3, 8, 15]
     Main.Mask.set(bits)
     mask = Main.Mask.read()
-    print(mask)
     for idx in range(Main.Mask.width):
         val = mask & (1 << idx)
         if idx in bits:
@@ -104,9 +113,10 @@ try:
     id = Main.ID.read()
     assert id == Main.ID.value, f"Read wrong ID {id}, expecting {Tb.ID.value}"
 
-    write_read_test(Main)
+    single_data_test(Main)
     array_test(Main)
     counter_test(Main)
+    add_test_zero(Main)
     add_test(Main)
     mask_test(Main)
 

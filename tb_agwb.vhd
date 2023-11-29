@@ -62,6 +62,8 @@ architecture sim of tb is
 
    signal sum : std_logic_vector(20 downto 0);
 
+   signal mask : std_logic_vector(15 downto 0);
+
 begin
 
    clk <= not clk after CLK_PERIOD / 2;
@@ -84,11 +86,12 @@ begin
    port map (
       clk_sys_i => clk,
       rst_n_i => '1',
+
       slave_i => wb_ms,
       slave_o => wb_sm,
+
       Subblock_wb_m_o => subblock_wb_ms,
       Subblock_wb_m_i => subblock_wb_sm,
-
 
       C1_o => c1,
       C2_o => c2,
@@ -107,7 +110,7 @@ begin
       Counter0_i => std_logic_vector(counter(31 downto 0)),
       Counter1_i => std_logic_vector(counter(32 downto 32)),
 
-      Mask_o    => open,
+      Mask_o    => mask,
       Version_i => x"010102"
    );
 

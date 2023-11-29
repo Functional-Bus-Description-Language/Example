@@ -20,8 +20,8 @@ def delay():
 iface = cosim.Iface(WRITE_FIFO_PATH, READ_FIFO_PATH, delay, True)
 
 
-def write_read_test(Main):
-    print("\n\nPerforming Write Read Test")
+def single_data_test(Main):
+    print("\n\nPerforming Single Data Test")
 
     r = randint(0, 2 ** 7 - 1)
     Main.C1.write(r)
@@ -131,7 +131,7 @@ try:
 
     Main = agwb.Main(iface, 0)
 
-    write_read_test(Main)
+    single_data_test(Main)
     array_test(Main)
     counter_test(Main)
     add_test(Main)

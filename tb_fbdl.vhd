@@ -47,6 +47,8 @@ architecture sim of tb is
    signal add_out : add_out_t;
    signal add_in  : add_in_t;
 
+   signal mask : std_logic_vector(15 downto 0);
+
 begin
 
    clk <= not clk after CLK_PERIOD / 2;
@@ -87,7 +89,7 @@ begin
 
       Counter_i => std_logic_vector(counter),
 
-      Mask_o => open
+      Mask_o => mask
    );
 
 
