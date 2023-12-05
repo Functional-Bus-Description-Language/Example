@@ -38,7 +38,7 @@ def single_data_test(Main):
     assert Main.C3.read() == r
     assert Main.S3.read() == r
 
-    print("Write Read Test Passed\n")
+    print("Single Data Test Passed\n")
 
 
 def array_test(Main):
