@@ -10,8 +10,30 @@ filesets:
     files:
       - tb_fbdl.vhd
     file_type: vhdlSource-2008
+  src:
+    depend:
+      - ::spi_wb_bridge
+      - ::fbd_tb
+      - mkru:vhdl-types:types
+    files:
+      - top_fbdl.vhd
+    file_type: vhdlSource-2008
+  constrs:
+    files:
+      - top.xdc
+    file_type: xdc
 
 targets:
+  default:
+    default_tool: vivado
+    tools:
+      vivado:
+        part: xc7s25ftgb196-1Q
+    toplevel: top_fbdl
+    filesets:
+      - src
+      - constrs
+
   tb_cosim:
     default_tool: ghdl
     toplevel: tb

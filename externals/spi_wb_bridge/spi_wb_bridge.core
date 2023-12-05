@@ -1,0 +1,65 @@
+CAPI=2:
+
+name: ::spi_wb_bridge
+
+filesets:
+  src:
+    depend:
+      - mkru:vhdl-regs:false_path_synchronizer
+      - cern:general_cores:wishbone_pkg:0.0.0
+    files:
+      - src/crc8_ccitt.vhd
+      - src/spi_wb_bridge_pkg.vhd
+      - src/spi_wb_bridge.vhd
+    file_type: vhdlSource-2008
+
+  sim:
+    files:
+      - src/spi_wb_bridge_sim_pkg.vhd
+    file_type: vhdlSource-2008
+
+  tb_write:
+    files:
+      - tb/tb_write.vhd
+    file_type: vhdlSource-2008
+
+  tb_read:
+    files:
+      - tb/tb_read.vhd
+    file_type: vhdlSource-2008
+
+  tb_vfbdb:
+    depend:
+      - ::tb_vfbdb_spi_wb_bridge
+    files:
+      - tb/vfbdb/tb_vfbdb.vhd
+    file_type: vhdlSource-2008
+
+targets:
+  default:
+    filesets:
+      - src
+
+  tb_write:
+    default_tool: ghdl
+    toplevel: tb_write
+    filesets:
+      - src
+      - sim
+      - tb_write
+
+  tb_read:
+    default_tool: ghdl
+    toplevel: tb_read
+    filesets:
+      - src
+      - sim
+      - tb_read
+
+  tb_vfbdb:
+    default_tool: ghdl
+    toplevel: tb_vfbdb
+    filesets:
+      - src
+      - sim
+      - tb_vfbdb

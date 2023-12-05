@@ -1,0 +1,23 @@
+CAPI=2:
+
+name: ::tb_vfbdb_spi_wb_bridge
+
+filesets:
+  vfbdb_dep:
+    depend:
+      - fbdl::vfbdb
+      - mkru:vhdl-types:types
+
+generate:
+  regs:
+    generator: vfbdb
+    parameters:
+      vhdl-wb3: []
+      main: bus.fbd
+
+targets:
+  default:
+    filesets:
+      - vfbdb_dep
+    generate:
+      - regs
