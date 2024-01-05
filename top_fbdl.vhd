@@ -15,8 +15,6 @@ library ltypes;
    use ltypes.types.all;
 
 
--- Debug ports (dbg0_o, dbg1_o) can be used however one wants.
--- Anyone is free to change theirs behavior and commit the change.
 entity Top_FBDL is
    port (
       clk_i : in std_logic;

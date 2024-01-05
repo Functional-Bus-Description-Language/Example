@@ -3,10 +3,6 @@ CAPI=2:
 name: ::tb_agwb
 
 filesets:
-  src:
-    files:
-      - tb_agwb.vhd
-    file_type: vhdlSource-2008
   tb:
     depend:
       - ::agwb_tb
@@ -14,8 +10,29 @@ filesets:
     files:
       - tb_agwb.vhd
     file_type: vhdlSource-2008
+  src:
+    depend:
+      - ::spi_wb_bridge
+      - ::agwb_tb
+    files:
+      - top_agwb.vhd
+    file_type: vhdlSource-2008
+  constrs:
+    files:
+      - top.xdc
+    file_type: xdc
 
 targets:
+  default:
+    default_tool: vivado
+    tools:
+      vivado:
+        part: xc7s25ftgb196-1Q
+    toplevel: top_agwb
+    filesets:
+      - src
+      - constrs
+
   tb_cosim:
     default_tool: ghdl
     toplevel: tb

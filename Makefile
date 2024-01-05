@@ -8,3 +8,6 @@ fbdl-synth:
 .PHONY: agwb
 agwb:
 	fsva ::tb_agwb tb_cosim
+
+agwb-synth:
+	fusesoc --cores-root . run --no-export --setup --build --target default ::tb_agwb
