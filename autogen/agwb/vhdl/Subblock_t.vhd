@@ -15,6 +15,9 @@ entity Subblock_t is
     g_Add0_size : integer := c_Add0_size;
     g_Add1_size : integer := c_Add1_size;
     g_Sum_size : integer := c_Sum_size;
+    g_Add_Stream0_size : integer := c_Add_Stream0_size;
+    g_Add_Stream1_size : integer := c_Add_Stream1_size;
+    g_Sum_Stream_size : integer := c_Sum_Stream_size;
 
     g_ver_id : std_logic_vector(31 downto 0) := c_Subblock_t_ver_id;
     g_registered : integer := 0
@@ -27,6 +30,11 @@ entity Subblock_t is
     Add1_o : out  t_Add1;
     Add1_o_stb : out std_logic;
     Sum_i : in  t_Sum;
+    Add_Stream0_o : out  t_Add_Stream0;
+    Add_Stream1_o : out  t_Add_Stream1;
+    Add_Stream1_o_stb : out std_logic;
+    Sum_Stream_i : in  t_Sum_Stream;
+    Sum_Stream_i_ack : out std_logic;
 
     rst_n_i : in std_logic;
     clk_sys_i : in std_logic
@@ -38,6 +46,9 @@ architecture gener of Subblock_t is
   signal int_Add0_o : t_Add0;
   signal int_Add1_o : t_Add1;
   signal int_Add1_o_stb : std_logic;
+  signal int_Add_Stream0_o : t_Add_Stream0;
+  signal int_Add_Stream1_o : t_Add_Stream1;
+  signal int_Add_Stream1_o_stb : std_logic;
 
 
   -- Internal WB declaration
@@ -59,6 +70,9 @@ begin
   assert g_Add0_size <= c_Add0_size report "g_Add0_size must be not greater than c_Add0_size=1" severity failure;
   assert g_Add1_size <= c_Add1_size report "g_Add1_size must be not greater than c_Add1_size=1" severity failure;
   assert g_Sum_size <= c_Sum_size report "g_Sum_size must be not greater than c_Sum_size=1" severity failure;
+  assert g_Add_Stream0_size <= c_Add_Stream0_size report "g_Add_Stream0_size must be not greater than c_Add_Stream0_size=1" severity failure;
+  assert g_Add_Stream1_size <= c_Add_Stream1_size report "g_Add_Stream1_size must be not greater than c_Add_Stream1_size=1" severity failure;
+  assert g_Sum_Stream_size <= c_Sum_Stream_size report "g_Sum_Stream_size must be not greater than c_Sum_Stream_size=1" severity failure;
 
   wb_up_i(0) <= slave_i;
   slave_o <= wb_up_o(0);
@@ -120,6 +134,8 @@ begin
         int_regs_wb_m_i.ack <= '0';
         int_regs_wb_m_i.err <= '0';
         int_Add1_o_stb <= '0';
+        int_Add_Stream1_o_stb <= '0';
+        Sum_Stream_i_ack <= '0';
 
         if (int_regs_wb_m_o.cyc = '1') and (int_regs_wb_m_o.stb = '1')
             and (int_regs_wb_m_i.err = '0') and (int_regs_wb_m_i.rty = '0')
@@ -175,6 +191,54 @@ begin
               int_regs_wb_m_i.err <= '0';
             end if;
           end loop; -- g_Sum_size
+          
+          -- That's a single register that may be present (size=1) or not (size=0).
+          -- The "for" loop works like "if".
+          -- That's why we do not index the register inside the loop.
+          for i in 0 to g_Add_Stream0_size - 1 loop
+            if int_addr = std_logic_vector(to_unsigned(5 + i, 3)) then
+              int_regs_wb_m_i.dat <= (others => '0');
+              int_regs_wb_m_i.dat(29 downto 0) <= to_slv(int_Add_Stream0_o);
+              if int_regs_wb_m_o.we = '1' then
+                int_Add_Stream0_o <= to_Add_Stream0(int_regs_wb_m_o.dat(29 downto 0));
+              end if;
+              int_regs_wb_m_i.ack <= '1';
+              int_regs_wb_m_i.err <= '0';
+            end if;
+          end loop; -- g_Add_Stream0_size
+          
+          -- That's a single register that may be present (size=1) or not (size=0).
+          -- The "for" loop works like "if".
+          -- That's why we do not index the register inside the loop.
+          for i in 0 to g_Add_Stream1_size - 1 loop
+            if int_addr = std_logic_vector(to_unsigned(6 + i, 3)) then
+              int_regs_wb_m_i.dat <= (others => '0');
+              int_regs_wb_m_i.dat(7 downto 0) <= to_slv(int_Add_Stream1_o);
+              if int_regs_wb_m_o.we = '1' then
+                int_Add_Stream1_o <= to_Add_Stream1(int_regs_wb_m_o.dat(7 downto 0));
+                if int_regs_wb_m_i.ack = '0' then
+                  int_Add_Stream1_o_stb <= '1';
+                end if;
+              end if;
+              int_regs_wb_m_i.ack <= '1';
+              int_regs_wb_m_i.err <= '0';
+            end if;
+          end loop; -- g_Add_Stream1_size
+          
+          -- That's a single register that may be present (size=1) or not (size=0).
+          -- The "for" loop works like "if".
+          -- That's why we do not index the register inside the loop.
+          for i in 0 to g_Sum_Stream_size - 1 loop
+            if int_addr = std_logic_vector(to_unsigned(7 + i, 3)) then
+              int_regs_wb_m_i.dat <= (others => '0');
+              int_regs_wb_m_i.dat(20 downto 0) <= std_logic_vector(Sum_Stream_i);
+              if int_regs_wb_m_i.ack = '0' then
+                 Sum_Stream_i_ack <= '1';
+              end if;
+              int_regs_wb_m_i.ack <= '1';
+              int_regs_wb_m_i.err <= '0';
+            end if;
+          end loop; -- g_Sum_Stream_size
 
 
           if int_addr = "000" then
@@ -204,6 +268,9 @@ begin
   Add0_o <= int_Add0_o;
   Add1_o <= int_Add1_o;
   Add1_o_stb <= int_Add1_o_stb;
+  Add_Stream0_o <= int_Add_Stream0_o;
+  Add_Stream1_o <= int_Add_Stream1_o;
+  Add_Stream1_o_stb <= int_Add_Stream1_o_stb;
   wb_m_i(0) <= int_regs_wb_m_i;
   int_regs_wb_m_o  <= wb_m_o(0);
 

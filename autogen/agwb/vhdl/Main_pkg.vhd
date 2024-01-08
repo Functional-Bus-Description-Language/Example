@@ -16,8 +16,8 @@ package Main_pkg is
 
   constant C_Main_ADDR_BITS : integer := 6;
 
-  constant c_Main_ver_id : std_logic_vector(31 downto 0) := x"6a3f1bcd";
-  constant v_Main_ver_id : t_ver_id_variants(0 downto 0) := (0 => x"6a3f1bcd");
+  constant c_Main_ver_id : std_logic_vector(31 downto 0) := x"f3f43cfd";
+  constant v_Main_ver_id : t_ver_id_variants(0 downto 0) := (0 => x"f3f43cfd");
   constant c_C1_size : integer := 1;
   constant c_C2_size : integer := 1;
   constant c_C3_size : integer := 1;

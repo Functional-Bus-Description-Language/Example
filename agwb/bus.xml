@@ -9,16 +9,27 @@
 			<field name="C" width="8"/>
 		</creg>
 		<sreg name="Sum" width = "21"/>
+
+		<!-- Add_Stream0 and Add_Stream1 are part of the addition stream. -->
+		<creg name="Add_Stream0">
+			<field name="A" width="20"/>
+			<field name="B" width="10"/>
+		</creg>
+		<creg name="Add_Stream1" stb="1">
+			<field name="C" width="8"/>
+		</creg>
+		<!-- Sum_Stream is part of the sum stream. -->
+		<sreg name="Sum_Stream" ack="1" width="21"/>
 	</block>
 
 	<block name="Main">
-		<creg name="C1" width = "7"/>
-		<creg name="C2" width = "9"/>
-		<creg name="C3" width = "12"/>
+		<creg name="C1" width="7"/>
+		<creg name="C2" width="9"/>
+		<creg name="C3" width="12"/>
 
-		<sreg name="S1" width = "7"/>
-		<sreg name="S2" width = "9"/>
-		<sreg name="S3" width = "12"/>
+		<sreg name="S1" width="7"/>
+		<sreg name="S2" width="9"/>
+		<sreg name="S3" width="12"/>
 
 		<creg name="CA4" reps="2">
 			<field name="Item0" width="8"/>
@@ -42,12 +53,12 @@
 			<field name="Item1" width="8"/>
 		</sreg>
 
-		<sreg name="Counter0" width = "32"/>
-		<sreg name="Counter1" width = "1"/>
+		<sreg name="Counter0" width="32"/>
+		<sreg name="Counter1" width="1"/>
 
 		<subblock name="Subblock" type="Subblock_t"/>
 
-		<creg name="Mask"   width = "16"/>
-		<sreg name="Version" width = "3*8"/>
+		<creg name="Mask"    width="16"/>
+		<sreg name="Version" width="3*8"/>
 	</block>
 </sysdef>

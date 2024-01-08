@@ -10,7 +10,7 @@ from . import agwb
 class Subblock_t(agwb.Block):
     x__size = 8
     x__id = 0xe6748e82
-    x__ver = 0x66fcb22a
+    x__ver = 0xac8b5742
     x__fields = {
         'ID':(0x0,(agwb.StatusRegister,)),\
         'VER':(0x1,(agwb.StatusRegister,)),\
@@ -24,13 +24,23 @@ class Subblock_t(agwb.Block):
             'C':agwb.BitField(7,0,False),\
         })),
         'Sum':(0x4,(agwb.StatusRegister,)),
+        'Add_Stream0':(0x5,(agwb.ControlRegister,
+        {\
+            'A':agwb.BitField(19,0,False),\
+            'B':agwb.BitField(29,20,False),\
+        })),
+        'Add_Stream1':(0x6,(agwb.ControlRegister,
+        {\
+            'C':agwb.BitField(7,0,False),\
+        })),
+        'Sum_Stream':(0x7,(agwb.StatusRegister,)),
     }
 
 
 class Main(agwb.Block):
     x__size = 64
     x__id = 0x1f1a625a
-    x__ver = 0x6a3f1bcd
+    x__ver = 0xf3f43cfd
     x__fields = {
         'ID':(0x0,(agwb.StatusRegister,)),\
         'VER':(0x1,(agwb.StatusRegister,)),\

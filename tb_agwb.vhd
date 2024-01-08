@@ -17,6 +17,9 @@ library work;
 library general_cores;
    use general_cores.wishbone_pkg.all;
 
+library ltypes;
+   use ltypes.types.all;
+
 library agwb;
    use agwb.Main_pkg.all;
    use agwb.Subblock_t_pkg.all;
@@ -61,6 +64,16 @@ architecture sim of tb is
    signal add1_stb : std_logic;
 
    signal sum : std_logic_vector(20 downto 0);
+
+   signal add_stream0     : t_add_stream0;
+   signal add_stream1     : t_add_stream1;
+   signal add_stream1_stb : std_logic;
+
+   signal sum_stream     : t_sum_stream;
+   signal sum_stream_ack : std_logic;
+
+   signal sum_buff : slv_vector(0 to 15)(20 downto 0);
+   signal sum_buff_write_ptr, sum_buff_read_ptr : natural := 0;
 
    signal mask : std_logic_vector(15 downto 0);
 
@@ -125,7 +138,14 @@ begin
       add0_o => add0,
       add1_o => add1,
       add1_o_stb => add1_stb,
-      sum_i => sum
+      sum_i => sum,
+
+      add_stream0_o     => add_stream0,
+      add_stream1_o     => add_stream1,
+      add_stream1_o_stb => add_stream1_stb,
+
+      sum_stream_i    => sum_stream,
+      sum_stream_i_ack => sum_stream_ack
    );
 
 
@@ -161,6 +181,34 @@ begin
    begin
       if rising_edge(clk) then
          counter <= counter + 1;
+      end if;
+   end process;
+
+
+   Add_Stream_Driver : process (clk) is
+   begin
+      if rising_edge(clk) then
+         if add_stream1_stb = '1' then
+            sum_buff(sum_buff_write_ptr) <= std_logic_vector(
+               resize(unsigned(add_stream0.a), sum_buff(0)'length) +
+               resize(unsigned(add_stream0.b), sum_buff(0)'length) +
+               resize(unsigned(add_stream1.c), sum_buff(0)'length)
+            );
+            sum_buff_write_ptr <= sum_buff_write_ptr + 1;
+         end if;
+      end if;
+   end process;
+
+
+   sum_stream <= sum_buff(sum_buff_read_ptr);
+
+
+   Sum_Stream_Driver : process (clk) is
+   begin
+      if rising_edge(clk) then
+         if sum_stream_ack = '1' then
+            sum_buff_read_ptr <= (sum_buff_read_ptr + 1) mod 16;
+         end if;
       end if;
    end process;
 
