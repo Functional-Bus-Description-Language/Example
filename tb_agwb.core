@@ -14,6 +14,7 @@ filesets:
     depend:
       - ::spi_wb_bridge
       - ::agwb_tb
+      - mkru:vhdl-types:types
     files:
       - top_agwb.vhd
     file_type: vhdlSource-2008
