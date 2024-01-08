@@ -8,7 +8,7 @@
 	"Width": 32,
 	"Sizes": {
 		"BlockAligned": 32,
-		"Compact": 16,
+		"Compact": 19,
 		"Own": 14
 	},
 	"AddrSpace": {
@@ -152,7 +152,7 @@
 			"IsArray": false,
 			"Count": 1,
 			"Groups": null,
-			"InitValue": "x\"d03e0dd9\"",
+			"InitValue": "x\"cacd0d6f\"",
 			"ReadValue": "",
 			"ResetValue": "",
 			"Width": 32,
@@ -262,12 +262,12 @@
 			"Reset": "",
 			"Width": 32,
 			"Sizes": {
-				"BlockAligned": 2,
-				"Compact": 2,
-				"Own": 2
+				"BlockAligned": 8,
+				"Compact": 5,
+				"Own": 5
 			},
 			"AddrSpace": {
-				"Start": 30,
+				"Start": 24,
 				"End": 31
 			},
 			"Consts": {
@@ -359,7 +359,90 @@
 			],
 			"Statics": null,
 			"Statuses": null,
-			"Streams": null,
+			"Streams": [
+				{
+					"Name": "Add_Stream",
+					"Doc": "",
+					"IsArray": false,
+					"Count": 1,
+					"Delay": null,
+					"Params": [
+						{
+							"Name": "A",
+							"Doc": "",
+							"IsArray": false,
+							"Count": 1,
+							"Groups": null,
+							"Range": null,
+							"Width": 20,
+							"Access": {
+								"Type": "SingleOneReg",
+								"Addr": 2,
+								"StartBit": 0,
+								"EndBit": 19
+							}
+						},
+						{
+							"Name": "B",
+							"Doc": "",
+							"IsArray": false,
+							"Count": 1,
+							"Groups": null,
+							"Range": null,
+							"Width": 10,
+							"Access": {
+								"Type": "SingleOneReg",
+								"Addr": 2,
+								"StartBit": 20,
+								"EndBit": 29
+							}
+						},
+						{
+							"Name": "C",
+							"Doc": "",
+							"IsArray": false,
+							"Count": 1,
+							"Groups": null,
+							"Range": null,
+							"Width": 8,
+							"Access": {
+								"Type": "SingleNRegs",
+								"RegCount": 2,
+								"StartAddr": 2,
+								"StartBit": 30,
+								"EndBit": 5
+							}
+						}
+					],
+					"Returns": null,
+					"StbAddr": 3
+				},
+				{
+					"Name": "Sum_Stream",
+					"Doc": "",
+					"IsArray": false,
+					"Count": 1,
+					"Delay": null,
+					"Params": null,
+					"Returns": [
+						{
+							"Name": "Sum",
+							"Doc": "",
+							"IsArray": false,
+							"Count": 1,
+							"Groups": null,
+							"Width": 21,
+							"Access": {
+								"Type": "SingleOneReg",
+								"Addr": 4,
+								"StartBit": 0,
+								"EndBit": 20
+							}
+						}
+					],
+					"StbAddr": 4
+				}
+			],
 			"Subblocks": null
 		}
 	]

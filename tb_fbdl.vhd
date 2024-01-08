@@ -47,6 +47,15 @@ architecture sim of tb is
    signal add_out : add_out_t;
    signal add_in  : add_in_t;
 
+   signal add_stream     : add_stream_t;
+   signal add_stream_stb : std_logic;
+
+   signal sum_stream     : sum_stream_t;
+   signal sum_stream_stb : std_logic;
+
+   signal sum_buff : slv_vector(0 to 15)(20 downto 0);
+   signal sum_buff_write_ptr, sum_buff_read_ptr : natural := 0;
+
    signal mask : std_logic_vector(15 downto 0);
 
 begin
@@ -101,7 +110,13 @@ begin
       slave_o(0)=> subblock_wb_sm,
 
       Add_o => add_out,
-      Add_i => add_in
+      Add_i => add_in,
+
+      Add_Stream_o     => add_stream,
+      Add_Stream_stb_o => add_stream_stb,
+
+      Sum_Stream_i     => sum_stream,
+      Sum_Stream_stb_o => sum_stream_stb
    );
 
 
@@ -123,6 +138,34 @@ begin
    begin
       if rising_edge(clk) then
          counter <= counter + 1;
+      end if;
+   end process;
+
+
+   Add_Stream_Driver : process (clk) is
+   begin
+      if rising_edge(clk) then
+         if add_stream_stb = '1' then
+            sum_buff(sum_buff_write_ptr) <= std_logic_vector(
+               resize(unsigned(add_stream.a), sum_buff(0)'length) +
+               resize(unsigned(add_stream.b), sum_buff(0)'length) +
+               resize(unsigned(add_stream.c), sum_buff(0)'length)
+            );
+            sum_buff_write_ptr <= sum_buff_write_ptr + 1;
+         end if;
+      end if;
+   end process;
+
+
+   sum_stream.sum <= sum_buff(sum_buff_read_ptr);
+
+
+   Sum_Stream_Driver : process (clk) is
+   begin
+      if rising_edge(clk) then
+         if sum_stream_stb = '1' then
+            sum_buff_read_ptr <= (sum_buff_read_ptr + 1) mod 16;
+         end if;
       end if;
    end process;
 

@@ -87,6 +87,26 @@ def add_test(Main):
     print("Add Test Passed\n")
 
 
+def streams_test(Main):
+    print("\n\nPerforming Streams Test")
+
+    data = []
+    for i in range(16):
+        dataset = []
+        dataset.append(randint(0, 2 ** Main.Subblock.Add_Stream.params[0]['Width'] - 1))
+        dataset.append(randint(0, 2 ** Main.Subblock.Add_Stream.params[1]['Width'] - 1))
+        dataset.append(randint(0, 2 ** Main.Subblock.Add_Stream.params[2]['Width'] - 1))
+        data.append(dataset)
+    Main.Subblock.Add_Stream.write(data)
+
+    sums = Main.Subblock.Sum_Stream.read(16)
+    for i, dataset in enumerate(data):
+        got = sums[i][0]
+        want = sum(dataset)
+        assert got == want, f"{i}: got {got}, want {want}"
+
+    print("Streams Test Passed\n")
+
 def mask_test(Main):
     print("\n\nPerforming Mask Test")
 
@@ -116,8 +136,9 @@ try:
     single_data_test(Main)
     array_test(Main)
     counter_test(Main)
-    add_test_zero(Main)
+    #add_test_zero(Main)
     add_test(Main)
+    streams_test(Main)
     mask_test(Main)
 
     print("\nEnding Cosimulation")

@@ -51,7 +51,7 @@ port (
    Subblock_master_o : out t_wishbone_master_out_array(0 downto 0);
    Subblock_master_i : in  t_wishbone_master_in_array(0 downto 0);
    Version_o : out std_logic_vector(23 downto 0) := x"010102";
-   ID_o : out std_logic_vector(31 downto 0) := x"d03e0dd9";
+   ID_o : out std_logic_vector(31 downto 0) := x"cacd0d6f";
    S1_i : in std_logic_vector(6 downto 0);
    S2_i : in std_logic_vector(8 downto 0);
    S3_i : in std_logic_vector(11 downto 0);
@@ -68,8 +68,8 @@ end entity;
 
 architecture rtl of Main is
 
-constant C_ADDRESSES : t_wishbone_address_array(1 downto 0) := (0 => "00000000000000000000000000000000", 1 => "00000000000000000000000000011110");
-constant C_MASKS     : t_wishbone_address_array(1 downto 0) := (0 => "00000000000000000000000000010000", 1 => "00000000000000000000000000011110");
+constant C_ADDRESSES : t_wishbone_address_array(1 downto 0) := (0 => "00000000000000000000000000000000", 1 => "00000000000000000000000000011000");
+constant C_MASKS     : t_wishbone_address_array(1 downto 0) := (0 => "00000000000000000000000000010000", 1 => "00000000000000000000000000011000");
 
 signal master_out : t_wishbone_master_out;
 signal master_in  : t_wishbone_master_in;
@@ -133,7 +133,7 @@ then
 
    -- Registers Access
    if 0 <= addr and addr <= 0 then
-      master_in.dat(31 downto 0) <= x"d03e0dd9"; -- ID
+      master_in.dat(31 downto 0) <= x"cacd0d6f"; -- ID
 
 
       master_in.ack <= '1';

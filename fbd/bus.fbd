@@ -19,5 +19,12 @@ Main bus
 			C param; width = 8
 			Sum return; width = 21
 
+		Add_Stream stream
+			A param; width = 20
+			B param; width = 10
+			C param; width = 8
+		Sum_Stream stream
+			Sum return; width = 21
+
 	Mask    mask; width = 16
 	Version static; width = 3*8; init-value = 0x010102

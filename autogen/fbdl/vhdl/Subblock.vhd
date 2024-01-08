@@ -33,6 +33,16 @@ end record;
 
 -- Stream types
 
+type Add_Stream_t is record
+   A : std_logic_vector(19 downto 0);
+   B : std_logic_vector(9 downto 0);
+   C : std_logic_vector(7 downto 0);
+end record;
+
+type Sum_Stream_t is record
+   Sum : std_logic_vector(20 downto 0);
+end record;
+
 end package;
 
 
@@ -61,7 +71,11 @@ port (
    slave_i : in  t_wishbone_slave_in_array (1 - 1 downto 0);
    slave_o : out t_wishbone_slave_out_array(1 - 1 downto 0);
    Add_o : out Add_out_t;
-   Add_i : in Add_in_t
+   Add_i : in Add_in_t;
+   Add_Stream_o : out Add_Stream_t;
+   Add_Stream_stb_o : out std_logic;
+   Sum_Stream_i : in Sum_Stream_t;
+   Sum_Stream_stb_o : out std_logic
 );
 end entity;
 
@@ -97,7 +111,7 @@ port map (
 
 register_access : process (clk_i) is
 
-variable addr : natural range 0 to 2 - 1;
+variable addr : natural range 0 to 5 - 1;
 
 begin
 
@@ -113,6 +127,8 @@ Add_o.call <= '0';
 -- Procs Exits Clear
 Add_o.exitt <= '0';
 -- Stream Strobes Clear
+Add_Stream_stb_o <= '0';
+Sum_Stream_stb_o <= '0';
 
 transfer : if
    master_out.cyc = '1'
@@ -121,7 +137,7 @@ transfer : if
    and master_in.rty = '0'
    and master_in.ack = '0'
 then
-   addr := to_integer(unsigned(master_out.adr(1 - 1 downto 0)));
+   addr := to_integer(unsigned(master_out.adr(3 - 1 downto 0)));
 
    -- First assume there is some kind of error.
    -- For example internal address is invalid or there is a try to write status.
@@ -162,6 +178,44 @@ then
       master_in.err <= '0';
    end if;
 
+   if 2 <= addr and addr <= 2 then
+
+      if master_out.we = '1' then
+         Add_Stream_o.A <= master_out.dat(19 downto 0);
+      end if;
+
+      if master_out.we = '1' then
+         Add_Stream_o.B <= master_out.dat(29 downto 20);
+      end if;
+
+      if master_out.we = '1' then
+         Add_Stream_o.C(1 downto 0) <= master_out.dat(31 downto 30);
+      end if;
+
+
+      master_in.ack <= '1';
+      master_in.err <= '0';
+   end if;
+
+   if 3 <= addr and addr <= 3 then
+
+      if master_out.we = '1' then
+         Add_Stream_o.C(7 downto 2) <= master_out.dat(5 downto 0);
+      end if;
+
+
+      master_in.ack <= '1';
+      master_in.err <= '0';
+   end if;
+
+   if 4 <= addr and addr <= 4 then
+      master_in.dat(20 downto 0) <= Sum_Stream_i.Sum;
+
+
+      master_in.ack <= '1';
+      master_in.err <= '0';
+   end if;
+
 
    -- Proc Calls Set
    Add_call : if addr = 1 then
@@ -178,6 +232,18 @@ then
    end if;
 
    -- Stream Strobes Set
+   Add_Stream_stb : if addr = 3 then
+      if master_out.we = '1' then
+         Add_Stream_stb_o <= '1';
+      end if;
+   end if;
+
+   Sum_Stream_stb : if addr = 4 then
+      if master_out.we = '0' then
+         Sum_Stream_stb_o <= '1';
+      end if;
+   end if;
+
 
 end if transfer;
 
