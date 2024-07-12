@@ -1,22 +1,23 @@
 ## Main
 
 * byte_size
-    * 128
+    * 256
 
 |name|offset_address|
 |:--|:--|
 |[Subblock.Add](#Main-Subblock-Add)|0x00|
-|[C1](#Main-C1)|0x08|
-|[C2](#Main-C2)|0x0c|
-|[C3](#Main-C3)|0x10|
-|[S1](#Main-S1)|0x14|
-|[S2](#Main-S2)|0x18|
-|[S3](#Main-S3)|0x1c|
-|[CA[10]](#Main-CA)|0x20<br>0x24<br>0x28<br>0x2c<br>0x30<br>0x34<br>0x38<br>0x3c<br>0x40<br>0x44|
-|[SA[10]](#Main-SA)|0x48<br>0x4c<br>0x50<br>0x54<br>0x58<br>0x5c<br>0x60<br>0x64<br>0x68<br>0x6c|
-|[Counter](#Main-Counter)|0x70|
-|[Mask](#Main-Mask)|0x78|
-|[Version](#Main-Version)|0x7c|
+|[Subblock.Sum_Stream](#Main-Subblock-Sum_Stream)|0x08|
+|[C1](#Main-C1)|0x0c|
+|[C2](#Main-C2)|0x10|
+|[C3](#Main-C3)|0x14|
+|[S1](#Main-S1)|0x18|
+|[S2](#Main-S2)|0x1c|
+|[S3](#Main-S3)|0x20|
+|[CA[10]](#Main-CA)|0x24<br>0x28<br>0x2c<br>0x30<br>0x34<br>0x38<br>0x3c<br>0x40<br>0x44<br>0x48|
+|[SA[10]](#Main-SA)|0x4c<br>0x50<br>0x54<br>0x58<br>0x5c<br>0x60<br>0x64<br>0x68<br>0x6c<br>0x70|
+|[Counter](#Main-Counter)|0x74|
+|[Mask](#Main-Mask)|0x7c|
+|[Version](#Main-Version)|0x80|
 
 ### <div id="Main-Subblock-Add"></div>Subblock.Add
 
@@ -32,10 +33,21 @@
 |C|[37:30]|wotrg|0x00||||
 |Sum|[58:38]|ro|||||
 
-### <div id="Main-C1"></div>C1
+### <div id="Main-Subblock-Sum_Stream"></div>Subblock.Sum_Stream
 
 * offset_address
     * 0x08
+* type
+    * default
+
+|name|bit_assignments|type|initial_value|reference|labels|comment|
+|:--|:--|:--|:--|:--|:--|:--|
+|Sum|[20:0]|rotrg|||||
+
+### <div id="Main-C1"></div>C1
+
+* offset_address
+    * 0x0c
 * type
     * default
 
@@ -46,7 +58,7 @@
 ### <div id="Main-C2"></div>C2
 
 * offset_address
-    * 0x0c
+    * 0x10
 * type
     * default
 
@@ -57,7 +69,7 @@
 ### <div id="Main-C3"></div>C3
 
 * offset_address
-    * 0x10
+    * 0x14
 * type
     * default
 
@@ -68,7 +80,7 @@
 ### <div id="Main-S1"></div>S1
 
 * offset_address
-    * 0x14
+    * 0x18
 * type
     * default
 
@@ -79,7 +91,7 @@
 ### <div id="Main-S2"></div>S2
 
 * offset_address
-    * 0x18
+    * 0x1c
 * type
     * default
 
@@ -90,7 +102,7 @@
 ### <div id="Main-S3"></div>S3
 
 * offset_address
-    * 0x1c
+    * 0x20
 * type
     * default
 
@@ -101,7 +113,6 @@
 ### <div id="Main-CA"></div>CA[10]
 
 * offset_address
-    * 0x20
     * 0x24
     * 0x28
     * 0x2c
@@ -111,6 +122,7 @@
     * 0x3c
     * 0x40
     * 0x44
+    * 0x48
 * type
     * default
 
@@ -121,7 +133,6 @@
 ### <div id="Main-SA"></div>SA[10]
 
 * offset_address
-    * 0x48
     * 0x4c
     * 0x50
     * 0x54
@@ -131,6 +142,7 @@
     * 0x64
     * 0x68
     * 0x6c
+    * 0x70
 * type
     * default
 
@@ -141,7 +153,7 @@
 ### <div id="Main-Counter"></div>Counter
 
 * offset_address
-    * 0x70
+    * 0x74
 * type
     * default
 
@@ -152,7 +164,7 @@
 ### <div id="Main-Mask"></div>Mask
 
 * offset_address
-    * 0x78
+    * 0x7c
 * type
     * default
 
@@ -163,7 +175,7 @@
 ### <div id="Main-Version"></div>Version
 
 * offset_address
-    * 0x7c
+    * 0x80
 * type
     * default
 

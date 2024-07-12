@@ -22,7 +22,7 @@
 module Main
   import rggen_rtl_pkg::*;
 #(
-  parameter int ADDRESS_WIDTH = 7,
+  parameter int ADDRESS_WIDTH = 8,
   parameter bit PRE_DECODE = 0,
   parameter bit [ADDRESS_WIDTH-1:0] BASE_ADDRESS = '0,
   parameter bit ERROR_STATUS = 0,
@@ -37,6 +37,8 @@ module Main
   output logic [7:0] o_Subblock_Add_C,
   output logic o_Subblock_Add_C_write_trigger,
   input logic [20:0] i_Subblock_Add_Sum,
+  input logic [20:0] i_Subblock_Sum_Stream_Sum,
+  output logic o_Subblock_Sum_Stream_Sum_read_trigger,
   output logic [6:0] o_C1_C1,
   output logic [8:0] o_C2_C2,
   output logic [11:0] o_C3_C3,
@@ -48,15 +50,15 @@ module Main
   input logic [32:0] i_Counter_Value,
   output logic [15:0] o_Mask_Mask
 );
-  rggen_register_if #(7, 32, 64) register_if[30]();
+  rggen_register_if #(8, 32, 64) register_if[31]();
   rggen_apb_adapter #(
     .ADDRESS_WIDTH        (ADDRESS_WIDTH),
-    .LOCAL_ADDRESS_WIDTH  (7),
+    .LOCAL_ADDRESS_WIDTH  (8),
     .BUS_WIDTH            (32),
-    .REGISTERS            (30),
+    .REGISTERS            (31),
     .PRE_DECODE           (PRE_DECODE),
     .BASE_ADDRESS         (BASE_ADDRESS),
-    .BYTE_SIZE            (128),
+    .BYTE_SIZE            (256),
     .ERROR_STATUS         (ERROR_STATUS),
     .DEFAULT_READ_DATA    (DEFAULT_READ_DATA),
     .INSERT_SLICER        (INSERT_SLICER)
@@ -73,8 +75,8 @@ module Main
       rggen_default_register #(
         .READABLE       (1),
         .WRITABLE       (1),
-        .ADDRESS_WIDTH  (7),
-        .OFFSET_ADDRESS (7'h00),
+        .ADDRESS_WIDTH  (8),
+        .OFFSET_ADDRESS (8'h00),
         .BUS_WIDTH      (32),
         .DATA_WIDTH     (64),
         .VALUE_WIDTH    (64)
@@ -191,6 +193,49 @@ module Main
         );
       end
     end
+    if (1) begin : g_Sum_Stream
+      rggen_bit_field_if #(32) bit_field_if();
+      `rggen_tie_off_unused_signals(32, 32'h001fffff, bit_field_if)
+      rggen_default_register #(
+        .READABLE       (1),
+        .WRITABLE       (0),
+        .ADDRESS_WIDTH  (8),
+        .OFFSET_ADDRESS (8'h08),
+        .BUS_WIDTH      (32),
+        .DATA_WIDTH     (32),
+        .VALUE_WIDTH    (64)
+      ) u_register (
+        .i_clk        (i_clk),
+        .i_rst_n      (i_rst_n),
+        .register_if  (register_if[1]),
+        .bit_field_if (bit_field_if)
+      );
+      if (1) begin : g_Sum
+        rggen_bit_field_if #(21) bit_field_sub_if();
+        `rggen_connect_bit_field_if(bit_field_if, bit_field_sub_if, 0, 21)
+        rggen_bit_field #(
+          .WIDTH              (21),
+          .STORAGE            (0),
+          .EXTERNAL_READ_DATA (1),
+          .TRIGGER            (1)
+        ) u_bit_field (
+          .i_clk              (i_clk),
+          .i_rst_n            (i_rst_n),
+          .bit_field_if       (bit_field_sub_if),
+          .o_write_trigger    (),
+          .o_read_trigger     (o_Subblock_Sum_Stream_Sum_read_trigger),
+          .i_sw_write_enable  ('0),
+          .i_hw_write_enable  ('0),
+          .i_hw_write_data    ('0),
+          .i_hw_set           ('0),
+          .i_hw_clear         ('0),
+          .i_value            (i_Subblock_Sum_Stream_Sum),
+          .i_mask             ('1),
+          .o_value            (),
+          .o_value_unmasked   ()
+        );
+      end
+    end
   end endgenerate
   generate if (1) begin : g_C1
     rggen_bit_field_if #(32) bit_field_if();
@@ -198,15 +243,15 @@ module Main
     rggen_default_register #(
       .READABLE       (1),
       .WRITABLE       (1),
-      .ADDRESS_WIDTH  (7),
-      .OFFSET_ADDRESS (7'h08),
+      .ADDRESS_WIDTH  (8),
+      .OFFSET_ADDRESS (8'h0c),
       .BUS_WIDTH      (32),
       .DATA_WIDTH     (32),
       .VALUE_WIDTH    (64)
     ) u_register (
       .i_clk        (i_clk),
       .i_rst_n      (i_rst_n),
-      .register_if  (register_if[1]),
+      .register_if  (register_if[2]),
       .bit_field_if (bit_field_if)
     );
     if (1) begin : g_C1
@@ -242,15 +287,15 @@ module Main
     rggen_default_register #(
       .READABLE       (1),
       .WRITABLE       (1),
-      .ADDRESS_WIDTH  (7),
-      .OFFSET_ADDRESS (7'h0c),
+      .ADDRESS_WIDTH  (8),
+      .OFFSET_ADDRESS (8'h10),
       .BUS_WIDTH      (32),
       .DATA_WIDTH     (32),
       .VALUE_WIDTH    (64)
     ) u_register (
       .i_clk        (i_clk),
       .i_rst_n      (i_rst_n),
-      .register_if  (register_if[2]),
+      .register_if  (register_if[3]),
       .bit_field_if (bit_field_if)
     );
     if (1) begin : g_C2
@@ -286,15 +331,15 @@ module Main
     rggen_default_register #(
       .READABLE       (1),
       .WRITABLE       (1),
-      .ADDRESS_WIDTH  (7),
-      .OFFSET_ADDRESS (7'h10),
+      .ADDRESS_WIDTH  (8),
+      .OFFSET_ADDRESS (8'h14),
       .BUS_WIDTH      (32),
       .DATA_WIDTH     (32),
       .VALUE_WIDTH    (64)
     ) u_register (
       .i_clk        (i_clk),
       .i_rst_n      (i_rst_n),
-      .register_if  (register_if[3]),
+      .register_if  (register_if[4]),
       .bit_field_if (bit_field_if)
     );
     if (1) begin : g_C3
@@ -330,15 +375,15 @@ module Main
     rggen_default_register #(
       .READABLE       (1),
       .WRITABLE       (0),
-      .ADDRESS_WIDTH  (7),
-      .OFFSET_ADDRESS (7'h14),
+      .ADDRESS_WIDTH  (8),
+      .OFFSET_ADDRESS (8'h18),
       .BUS_WIDTH      (32),
       .DATA_WIDTH     (32),
       .VALUE_WIDTH    (64)
     ) u_register (
       .i_clk        (i_clk),
       .i_rst_n      (i_rst_n),
-      .register_if  (register_if[4]),
+      .register_if  (register_if[5]),
       .bit_field_if (bit_field_if)
     );
     if (1) begin : g_S1
@@ -373,15 +418,15 @@ module Main
     rggen_default_register #(
       .READABLE       (1),
       .WRITABLE       (0),
-      .ADDRESS_WIDTH  (7),
-      .OFFSET_ADDRESS (7'h18),
+      .ADDRESS_WIDTH  (8),
+      .OFFSET_ADDRESS (8'h1c),
       .BUS_WIDTH      (32),
       .DATA_WIDTH     (32),
       .VALUE_WIDTH    (64)
     ) u_register (
       .i_clk        (i_clk),
       .i_rst_n      (i_rst_n),
-      .register_if  (register_if[5]),
+      .register_if  (register_if[6]),
       .bit_field_if (bit_field_if)
     );
     if (1) begin : g_S2
@@ -416,15 +461,15 @@ module Main
     rggen_default_register #(
       .READABLE       (1),
       .WRITABLE       (0),
-      .ADDRESS_WIDTH  (7),
-      .OFFSET_ADDRESS (7'h1c),
+      .ADDRESS_WIDTH  (8),
+      .OFFSET_ADDRESS (8'h20),
       .BUS_WIDTH      (32),
       .DATA_WIDTH     (32),
       .VALUE_WIDTH    (64)
     ) u_register (
       .i_clk        (i_clk),
       .i_rst_n      (i_rst_n),
-      .register_if  (register_if[6]),
+      .register_if  (register_if[7]),
       .bit_field_if (bit_field_if)
     );
     if (1) begin : g_S3
@@ -461,15 +506,15 @@ module Main
       rggen_default_register #(
         .READABLE       (1),
         .WRITABLE       (1),
-        .ADDRESS_WIDTH  (7),
-        .OFFSET_ADDRESS (7'h20+7'(4*i)),
+        .ADDRESS_WIDTH  (8),
+        .OFFSET_ADDRESS (8'h24+8'(4*i)),
         .BUS_WIDTH      (32),
         .DATA_WIDTH     (32),
         .VALUE_WIDTH    (64)
       ) u_register (
         .i_clk        (i_clk),
         .i_rst_n      (i_rst_n),
-        .register_if  (register_if[7+i]),
+        .register_if  (register_if[8+i]),
         .bit_field_if (bit_field_if)
       );
       if (1) begin : g_C
@@ -508,15 +553,15 @@ module Main
       rggen_default_register #(
         .READABLE       (1),
         .WRITABLE       (0),
-        .ADDRESS_WIDTH  (7),
-        .OFFSET_ADDRESS (7'h48+7'(4*i)),
+        .ADDRESS_WIDTH  (8),
+        .OFFSET_ADDRESS (8'h4c+8'(4*i)),
         .BUS_WIDTH      (32),
         .DATA_WIDTH     (32),
         .VALUE_WIDTH    (64)
       ) u_register (
         .i_clk        (i_clk),
         .i_rst_n      (i_rst_n),
-        .register_if  (register_if[17+i]),
+        .register_if  (register_if[18+i]),
         .bit_field_if (bit_field_if)
       );
       if (1) begin : g_S
@@ -552,15 +597,15 @@ module Main
     rggen_default_register #(
       .READABLE       (1),
       .WRITABLE       (0),
-      .ADDRESS_WIDTH  (7),
-      .OFFSET_ADDRESS (7'h70),
+      .ADDRESS_WIDTH  (8),
+      .OFFSET_ADDRESS (8'h74),
       .BUS_WIDTH      (32),
       .DATA_WIDTH     (64),
       .VALUE_WIDTH    (64)
     ) u_register (
       .i_clk        (i_clk),
       .i_rst_n      (i_rst_n),
-      .register_if  (register_if[27]),
+      .register_if  (register_if[28]),
       .bit_field_if (bit_field_if)
     );
     if (1) begin : g_Value
@@ -596,15 +641,15 @@ module Main
     rggen_default_register #(
       .READABLE       (1),
       .WRITABLE       (1),
-      .ADDRESS_WIDTH  (7),
-      .OFFSET_ADDRESS (7'h78),
+      .ADDRESS_WIDTH  (8),
+      .OFFSET_ADDRESS (8'h7c),
       .BUS_WIDTH      (32),
       .DATA_WIDTH     (32),
       .VALUE_WIDTH    (64)
     ) u_register (
       .i_clk        (i_clk),
       .i_rst_n      (i_rst_n),
-      .register_if  (register_if[28]),
+      .register_if  (register_if[29]),
       .bit_field_if (bit_field_if)
     );
     if (1) begin : g_Mask
@@ -640,15 +685,15 @@ module Main
     rggen_default_register #(
       .READABLE       (1),
       .WRITABLE       (0),
-      .ADDRESS_WIDTH  (7),
-      .OFFSET_ADDRESS (7'h7c),
+      .ADDRESS_WIDTH  (8),
+      .OFFSET_ADDRESS (8'h80),
       .BUS_WIDTH      (32),
       .DATA_WIDTH     (32),
       .VALUE_WIDTH    (64)
     ) u_register (
       .i_clk        (i_clk),
       .i_rst_n      (i_rst_n),
-      .register_if  (register_if[29]),
+      .register_if  (register_if[30]),
       .bit_field_if (bit_field_if)
     );
     if (1) begin : g_Version

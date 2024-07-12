@@ -4,7 +4,7 @@ protocol: wishbone
 
 register_block:
   - name: Main
-    byte_size: 128 # User must implicitly specify the byte size
+    byte_size: 256 # User must implicitly specify the byte size
 
     registers:
       - name: C1
@@ -60,3 +60,13 @@ register_block:
               - { name: B,   type: wo,    bit_assignment: {width: 10}, initial_value: 0 }
               - { name: C,   type: wotrg, bit_assignment: {width: 8},  initial_value: 0 }
               - { name: Sum, type: ro,    bit_assignment: {width: 21} }
+
+          - name: Add_Stream
+            bit_fields:
+              - { name: A,   type: wo,    bit_assignment: {width: 20}, initial_value: 0 }
+              - { name: B,   type: wo,    bit_assignment: {width: 10}, initial_value: 0 }
+              - { name: C,   type: wotrg, bit_assignment: {width: 8},  initial_value: 0 }
+
+            name: Sum_Stream
+            bit_fields:
+              - { name: Sum, type: rotrg, bit_assignment: {width: 21} }
