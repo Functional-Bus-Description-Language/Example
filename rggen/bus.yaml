@@ -1,0 +1,62 @@
+bus_width: 32
+address_width: 32
+protocol: wishbone
+
+register_block:
+  - name: Main
+    byte_size: 128 # User must implicitly specify the byte size
+
+    registers:
+      - name: C1
+        bit_fields:
+          - { name: C1, type: rw, bit_assignment: {width: 7}, initial_value: 0 }
+      - name: C2
+        bit_fields:
+          - { name: C2, type: rw, bit_assignment: {width: 9}, initial_value: 0 }
+      - name: C3
+        bit_fields:
+          - { name: C3, type: rw, bit_assignment: {width: 12}, initial_value: 0 }
+
+      - name: S1
+        bit_fields:
+          - { name: S1, type: ro, bit_assignment: {width: 7} }
+      - name: S2
+        bit_fields:
+          - { name: S2, type: ro, bit_assignment: {width: 9} }
+      - name: S3
+        bit_fields:
+          - { name: S3, type: ro, bit_assignment: {width: 12} }
+
+      - name: CA
+        size: 10
+        bit_fields:
+          - { name: C, type: rw, bit_assignment: {width: 8}, initial_value: 0 }
+      - name: SA
+        size: 10
+        bit_fields:
+          - { name: S, type: ro, bit_assignment: {width: 8} }
+
+      # Software generowany tylko do 64 bitów, brak atomowości dostępów.
+      - name: Counter
+        bit_fields:
+          - { name: Value, type: ro, bit_assignment: {width: 33}, initial_value: 0 }
+
+      - name: Mask
+        bit_fields:
+          - { name: Mask, type: rw, bit_assignment: {width: 16}, initial_value: 0 }
+
+      # Brak ewaluacji wyrażeń: width: 3*8 nie działa
+      - name: Version
+        bit_fields:
+          - { name: Version, type: rof, bit_assignment: {width: 24}, initial_value: 0x010102 }
+
+    register_file:
+      - name: Subblock
+
+        registers:
+          - name: Add
+            bit_fields:
+              - { name: A,   type: wo,    bit_assignment: {width: 20}, initial_value: 0 }
+              - { name: B,   type: wo,    bit_assignment: {width: 10}, initial_value: 0 }
+              - { name: C,   type: wotrg, bit_assignment: {width: 8},  initial_value: 0 }
+              - { name: Sum, type: ro,    bit_assignment: {width: 21} }
