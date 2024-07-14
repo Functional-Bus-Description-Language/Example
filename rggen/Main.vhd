@@ -10,21 +10,23 @@ entity Main is
     PRE_DECODE: boolean := false;
     BASE_ADDRESS: unsigned := x"0";
     ERROR_STATUS: boolean := false;
-    INSERT_SLICER: boolean := false
+    INSERT_SLICER: boolean := false;
+    USE_STALL: boolean := true
   );
   port (
     i_clk: in std_logic;
     i_rst_n: in std_logic;
-    i_psel: in std_logic;
-    i_penable: in std_logic;
-    i_paddr: in std_logic_vector(ADDRESS_WIDTH-1 downto 0);
-    i_pprot: in std_logic_vector(2 downto 0);
-    i_pwrite: in std_logic;
-    i_pstrb: in std_logic_vector(3 downto 0);
-    i_pwdata: in std_logic_vector(31 downto 0);
-    o_pready: out std_logic;
-    o_prdata: out std_logic_vector(31 downto 0);
-    o_pslverr: out std_logic;
+    i_wb_cyc: in std_logic;
+    i_wb_stb: in std_logic;
+    o_wb_stall: out std_logic;
+    i_wb_adr: in std_logic_vector(ADDRESS_WIDTH-1 downto 0);
+    i_wb_we: in std_logic;
+    i_wb_dat: in std_logic_vector(31 downto 0);
+    i_wb_sel: in std_logic_vector(3 downto 0);
+    o_wb_ack: out std_logic;
+    o_wb_err: out std_logic;
+    o_wb_rty: out std_logic;
+    o_wb_dat: out std_logic_vector(31 downto 0);
     o_Subblock_Add_A: out std_logic_vector(19 downto 0);
     o_Subblock_Add_B: out std_logic_vector(9 downto 0);
     o_Subblock_Add_C: out std_logic_vector(7 downto 0);
@@ -57,7 +59,7 @@ architecture rtl of Main is
   signal register_read_data: std_logic_vector(991 downto 0);
   signal register_value: std_logic_vector(1983 downto 0);
 begin
-  u_adapter: entity work.rggen_apb_adaper
+  u_adapter: entity work.rggen_wishbone_adapter
     generic map (
       ADDRESS_WIDTH       => ADDRESS_WIDTH,
       LOCAL_ADDRESS_WIDTH => 8,
@@ -67,21 +69,23 @@ begin
       BASE_ADDRESS        => BASE_ADDRESS,
       BYTE_SIZE           => 256,
       ERROR_STATUS        => ERROR_STATUS,
-      INSERT_SLICER       => INSERT_SLICER
+      INSERT_SLICER       => INSERT_SLICER,
+      USE_STALL           => USE_STALL
     )
     port map (
       i_clk                 => i_clk,
       i_rst_n               => i_rst_n,
-      i_psel                => i_psel,
-      i_penable             => i_penable,
-      i_paddr               => i_paddr,
-      i_pprot               => i_pprot,
-      i_pwrite              => i_pwrite,
-      i_pstrb               => i_pstrb,
-      i_pwdata              => i_pwdata,
-      o_pready              => o_pready,
-      o_prdata              => o_prdata,
-      o_pslverr             => o_pslverr,
+      i_wb_cyc              => i_wb_cyc,
+      i_wb_stb              => i_wb_stb,
+      o_wb_stall            => o_wb_stall,
+      i_wb_adr              => i_wb_adr,
+      i_wb_we               => i_wb_we,
+      i_wb_dat              => i_wb_dat,
+      i_wb_sel              => i_wb_sel,
+      o_wb_ack              => o_wb_ack,
+      o_wb_err              => o_wb_err,
+      o_wb_rty              => o_wb_rty,
+      o_wb_dat              => o_wb_dat,
       o_register_valid      => register_valid,
       o_register_access     => register_access,
       o_register_address    => register_address,

@@ -27,11 +27,12 @@ module Main
   parameter bit [ADDRESS_WIDTH-1:0] BASE_ADDRESS = '0,
   parameter bit ERROR_STATUS = 0,
   parameter bit [31:0] DEFAULT_READ_DATA = '0,
-  parameter bit INSERT_SLICER = 0
+  parameter bit INSERT_SLICER = 0,
+  parameter bit USE_STALL = 1
 )(
   input logic i_clk,
   input logic i_rst_n,
-  rggen_apb_if.slave apb_if,
+  rggen_wishbone_if.slave wishbone_if,
   output logic [19:0] o_Subblock_Add_A,
   output logic [9:0] o_Subblock_Add_B,
   output logic [7:0] o_Subblock_Add_C,
@@ -51,7 +52,7 @@ module Main
   output logic [15:0] o_Mask_Mask
 );
   rggen_register_if #(8, 32, 64) register_if[31]();
-  rggen_apb_adapter #(
+  rggen_wishbone_adapter #(
     .ADDRESS_WIDTH        (ADDRESS_WIDTH),
     .LOCAL_ADDRESS_WIDTH  (8),
     .BUS_WIDTH            (32),
@@ -61,11 +62,12 @@ module Main
     .BYTE_SIZE            (256),
     .ERROR_STATUS         (ERROR_STATUS),
     .DEFAULT_READ_DATA    (DEFAULT_READ_DATA),
-    .INSERT_SLICER        (INSERT_SLICER)
+    .INSERT_SLICER        (INSERT_SLICER),
+    .USE_STALL            (USE_STALL)
   ) u_adapter (
     .i_clk        (i_clk),
     .i_rst_n      (i_rst_n),
-    .apb_if       (apb_if),
+    .wishbone_if  (wishbone_if),
     .register_if  (register_if)
   );
   generate if (1) begin : g_Subblock
