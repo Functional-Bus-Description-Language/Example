@@ -1,0 +1,22 @@
+addrmap Main {
+  name = "Main";
+  default regwidth = 32;
+
+  reg {
+    field {sw = rw; hw = r; fieldwidth = 7;}  C1;
+    field {sw = rw; hw = r; fieldwidth = 9;}  C2;
+    field {sw = rw; hw = r; fieldwidth = 12;} C3;
+  } C;
+
+  reg {
+    field {sw = r; hw = w; fieldwidth = 7;}  S1;
+    field {sw = r; hw = w; fieldwidth = 9;}  S2;
+    field {sw = r; hw = w; fieldwidth = 12;} S3;
+  } S;
+
+  reg { regwidth = 8; field {sw= rw; hw = r; fieldwidth = 8; } C; } CA[10];
+  reg { regwidth = 8; field {sw= r; hw = w; fieldwidth = 8; } C; } SA[10];
+
+  reg { field {sw = r; hw = w; fieldwidth = 32; } Value; } Counter0;
+  reg { regwidth = 8; field {sw = r; hw = w; fieldwidth = 1; } Value; } Counter1;
+};
