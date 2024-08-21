@@ -14,7 +14,7 @@ addrmap Main {
   } S;
 
   reg { regwidth = 8; field {sw= rw; hw = r; fieldwidth = 8;} C; } CA[10];
-  reg { regwidth = 8; field {sw= r; hw = w; fieldwidth = 8;} C; } SA[10];
+  reg { regwidth = 8; field {sw= r; hw = w; fieldwidth = 8;} S; } SA[10];
 
   reg { field {sw = r; hw = w; fieldwidth = 32;} Value;} Counter0;
   reg { regwidth = 8; field {sw = r; hw = w; fieldwidth = 1;} Value;} Counter1;
