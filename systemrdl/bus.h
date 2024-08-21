@@ -53,6 +53,17 @@ extern "C" {
 #define MAIN__COUNTER1__VALUE_bp 0
 #define MAIN__COUNTER1__VALUE_bw 1
 
+// Reg - Main::Mask
+#define MAIN__MASK__MASK_bm 0xffff
+#define MAIN__MASK__MASK_bp 0
+#define MAIN__MASK__MASK_bw 16
+
+// Reg - Main::Version
+#define MAIN__VERSION__VERSION_bm 0xffffff
+#define MAIN__VERSION__VERSION_bp 0
+#define MAIN__VERSION__VERSION_bw 24
+#define MAIN__VERSION__VERSION_reset 0x10102
+
 // Addrmap - Main
 typedef struct __attribute__ ((__packed__)) {
     uint32_t C;
@@ -61,10 +72,13 @@ typedef struct __attribute__ ((__packed__)) {
     uint8_t SA[10];
     uint32_t Counter0;
     uint8_t Counter1;
+    uint8_t RESERVED_21_21[0x1];
+    uint16_t Mask;
+    uint32_t Version;
 } Main_t;
 
 
-static_assert(sizeof(Main_t) == 0x21, "Packing error");
+static_assert(sizeof(Main_t) == 0x28, "Packing error");
 
 #ifdef __cplusplus
 }
