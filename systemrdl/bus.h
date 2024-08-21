@@ -39,9 +39,9 @@ extern "C" {
 #define MAIN__CA__C_bw 8
 
 // Reg - Main::SA
-#define MAIN__SA__C_bm 0xff
-#define MAIN__SA__C_bp 0
-#define MAIN__SA__C_bw 8
+#define MAIN__SA__S_bm 0xff
+#define MAIN__SA__S_bp 0
+#define MAIN__SA__S_bw 8
 
 // Reg - Main::Counter0
 #define MAIN__COUNTER0__VALUE_bm 0xffffffff
@@ -68,17 +68,16 @@ extern "C" {
 typedef struct __attribute__ ((__packed__)) {
     uint32_t C;
     uint32_t S;
-    uint8_t CA[10];
-    uint8_t SA[10];
+    uint32_t CA[10];
+    uint32_t SA[10];
     uint32_t Counter0;
-    uint8_t Counter1;
-    uint8_t RESERVED_21_21[0x1];
-    uint16_t Mask;
+    uint32_t Counter1;
+    uint32_t Mask;
     uint32_t Version;
 } Main_t;
 
 
-static_assert(sizeof(Main_t) == 0x28, "Packing error");
+static_assert(sizeof(Main_t) == 0x68, "Packing error");
 
 #ifdef __cplusplus
 }
