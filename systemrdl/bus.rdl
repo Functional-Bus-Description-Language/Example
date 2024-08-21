@@ -33,5 +33,13 @@ addrmap Main {
     } Add1;
     reg { field {sw = r; hw = w; fieldwidth = 20;} Sum;} Sum;
 
+    reg {
+      field {sw = w; hw =r; fieldwidth = 20;} A;
+      field {sw = w; hw =r; fieldwidth = 10;} B;
+    } Add_Stream0;
+    reg {
+      field {sw = w; hw =r; fieldwidth = 8; swacc;} C;
+    } Add_Stream1;
+    reg { field {sw = r; hw = w; fieldwidth = 20;} Sum;} Sum_Stream;
   };
 };
