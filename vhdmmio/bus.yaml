@@ -9,3 +9,9 @@ fields:
   - { name: S1, address: 0xC,  behavior: status, bitrange: 6..0 }
   - { name: S2, address: 0x10, behavior: status, bitrange: 8..0 }
   - { name: S3, address: 0x14, behavior: status, bitrange: 11..0 }
+
+  - { name: CA, address: 0x18, behavior: control, bitrange: 7..0, repeat: 10}
+  - { name: SA, address: 0x24, behavior: status,  bitrange: 7..0, repeat: 10}
+
+  # Atomowy dostęp, ale blokuje dostęp do slave'a pomiędzy dostępoami do rejestrów Counter'a.
+  - { name: Counter, address: 0x30, behavior: status, bitrange: 33..0 }

@@ -47,6 +47,26 @@ package Main_pkg is
   constant MAIN_F_S3_I_RESET : Main_f_S3_i_type := (
     write_data => (others => '0')
   );
+  type Main_f_CA_o_type is record
+    data : std_logic_vector(7 downto 0);
+  end record;
+  constant MAIN_F_CA_O_RESET : Main_f_CA_o_type := (
+    data => (others => '0')
+  );
+  type Main_f_CA_o_array is array (natural range <>) of Main_f_CA_o_type;
+  type Main_f_SA_i_type is record
+    write_data : std_logic_vector(7 downto 0);
+  end record;
+  constant MAIN_F_SA_I_RESET : Main_f_SA_i_type := (
+    write_data => (others => '0')
+  );
+  type Main_f_SA_i_array is array (natural range <>) of Main_f_SA_i_type;
+  type Main_f_Counter_i_type is record
+    write_data : std_logic_vector(33 downto 0);
+  end record;
+  constant MAIN_F_COUNTER_I_RESET : Main_f_Counter_i_type := (
+    write_data => (others => '0')
+  );
 
   -- Component declaration for Main.
   component Main is
@@ -73,6 +93,15 @@ package Main_pkg is
 
       -- Interface for field S3: S3.
       f_S3_i : in Main_f_S3_i_type := MAIN_F_S3_I_RESET;
+
+      -- Interface for field group CA: CA.
+      f_CA_o : out Main_f_CA_o_array(0 to 9) := (others => MAIN_F_CA_O_RESET);
+
+      -- Interface for field group SA: SA.
+      f_SA_i : in Main_f_SA_i_array(0 to 9) := (others => MAIN_F_SA_I_RESET);
+
+      -- Interface for field Counter: Counter.
+      f_Counter_i : in Main_f_Counter_i_type := MAIN_F_COUNTER_I_RESET;
 
       -- AXI4-lite + interrupt request bus to the master.
       bus_i : in  axi4l32_m2s_type := AXI4L32_M2S_RESET;

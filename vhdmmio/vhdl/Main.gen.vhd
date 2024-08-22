@@ -34,6 +34,15 @@ entity Main is
     -- Interface for field S3: S3.
     f_S3_i : in Main_f_S3_i_type := MAIN_F_S3_I_RESET;
 
+    -- Interface for field group CA: CA.
+    f_CA_o : out Main_f_CA_o_array(0 to 9) := (others => MAIN_F_CA_O_RESET);
+
+    -- Interface for field group SA: SA.
+    f_SA_i : in Main_f_SA_i_array(0 to 9) := (others => MAIN_F_SA_I_RESET);
+
+    -- Interface for field Counter: Counter.
+    f_Counter_i : in Main_f_Counter_i_type := MAIN_F_COUNTER_I_RESET;
+
     -- AXI4-lite + interrupt request bus to the master.
     bus_i : in  axi4l32_m2s_type := AXI4L32_M2S_RESET;
     bus_o : out axi4l32_s2m_type := AXI4L32_S2M_RESET
@@ -102,8 +111,8 @@ begin
     -- Logical write data holding registers. For multi-word registers, write
     -- data is held in w_hold and w_hstb until the last subregister is written,
     -- at which point their entire contents are written at once.
-    variable w_hold : std_logic_vector(31 downto 0) := (others => '0'); -- reg
-    variable w_hstb : std_logic_vector(31 downto 0) := (others => '0'); -- reg
+    variable w_hold : std_logic_vector(95 downto 0) := (others => '0'); -- reg
+    variable w_hstb : std_logic_vector(95 downto 0) := (others => '0'); -- reg
 
     -- Between the first and last access to a multiword register, the multi
     -- bit will be set. If it is set while a request with a different *_prot is
@@ -197,7 +206,7 @@ begin
     -- Logical read data holding register. This is set when r_ack is set during
     -- an access to the first physical register of a logical register for all
     -- fields in the logical register.
-    variable r_hold  : std_logic_vector(31 downto 0) := (others => '0'); -- reg
+    variable r_hold  : std_logic_vector(95 downto 0) := (others => '0'); -- reg
 
     -- Physical read data. This is taken from r_hold based on which physical
     -- subregister is being read.
@@ -279,13 +288,53 @@ begin
     type f_S3_r_array is array (natural range <>) of f_S3_r_type;
     variable f_S3_r : f_S3_r_array(0 to 0) := (others => F_S3_R_RESET);
 
+    -- Private declarations for field group CA: CA.
+    type f_CA_r_type is record
+      d : std_logic_vector(7 downto 0);
+      v : std_logic;
+    end record;
+    constant F_CA_R_RESET : f_CA_r_type := (
+      d => (others => '0'),
+      v => '0'
+    );
+    type f_CA_r_array is array (natural range <>) of f_CA_r_type;
+    variable f_CA_r : f_CA_r_array(0 to 9) := (others => F_CA_R_RESET);
+
+    -- Private declarations for field group SA: SA.
+    type f_SA_r_type is record
+      d : std_logic_vector(7 downto 0);
+      v : std_logic;
+    end record;
+    constant F_SA_R_RESET : f_SA_r_type := (
+      d => (others => '0'),
+      v => '0'
+    );
+    type f_SA_r_array is array (natural range <>) of f_SA_r_type;
+    variable f_SA_r : f_SA_r_array(0 to 9) := (others => F_SA_R_RESET);
+
+    -- Private declarations for field Counter: Counter.
+    type f_Counter_r_type is record
+      d : std_logic_vector(33 downto 0);
+      v : std_logic;
+    end record;
+    constant F_COUNTER_R_RESET : f_Counter_r_type := (
+      d => (others => '0'),
+      v => '0'
+    );
+    type f_Counter_r_array is array (natural range <>) of f_Counter_r_type;
+    variable f_Counter_r : f_Counter_r_array(0 to 0)
+        := (others => F_COUNTER_R_RESET);
+
     -- Temporary variables for the field templates.
     variable tmp_data7   : std_logic_vector(6 downto 0);
     variable tmp_strb7   : std_logic_vector(6 downto 0);
+    variable tmp_data8   : std_logic_vector(7 downto 0);
+    variable tmp_strb8   : std_logic_vector(7 downto 0);
     variable tmp_data9   : std_logic_vector(8 downto 0);
     variable tmp_strb9   : std_logic_vector(8 downto 0);
     variable tmp_data12  : std_logic_vector(11 downto 0);
     variable tmp_strb12  : std_logic_vector(11 downto 0);
+    variable tmp_data34  : std_logic_vector(33 downto 0);
 
   begin
     if rising_edge(clk) then
@@ -388,6 +437,21 @@ begin
       f_S3_r((0)).d := f_S3_i.write_data;
       f_S3_r((0)).v := '1';
 
+      -- Pre-bus logic for field group SA: SA.
+      for i in 0 to 9 loop
+
+        -- Handle hardware write for field SA: status.
+        f_SA_r((i)).d := f_SA_i((i)).write_data;
+        f_SA_r((i)).v := '1';
+
+      end loop;
+
+      -- Pre-bus logic for field Counter: Counter.
+
+      -- Handle hardware write for field Counter: status.
+      f_Counter_r((0)).d := f_Counter_i.write_data;
+      f_Counter_r((0)).v := '1';
+
       -------------------------------------------------------------------------
       -- Bus read logic
       -------------------------------------------------------------------------
@@ -396,9 +460,9 @@ begin
       subaddr_none(0) := '0';
 
       -- Read address decoder.
-      if r_addr(31 downto 5) = "000000000000000000000000000" then
-        case r_addr(4 downto 2) is
-          when "000" =>
+      if r_addr(31 downto 6) = "00000000000000000000000000" then
+        case r_addr(5 downto 2) is
+          when "0000" =>
             -- r_addr = 000000000000000000000000000000--
 
             if r_req then
@@ -433,7 +497,7 @@ begin
 
             end if;
 
-          when "001" =>
+          when "0001" =>
             -- r_addr = 000000000000000000000000000001--
 
             if r_req then
@@ -468,7 +532,7 @@ begin
 
             end if;
 
-          when "010" =>
+          when "0010" =>
             -- r_addr = 000000000000000000000000000010--
 
             if r_req then
@@ -503,7 +567,7 @@ begin
 
             end if;
 
-          when "011" =>
+          when "0011" =>
             -- r_addr = 000000000000000000000000000011--
 
             if r_req then
@@ -538,7 +602,7 @@ begin
 
             end if;
 
-          when "100" =>
+          when "0100" =>
             -- r_addr = 000000000000000000000000000100--
 
             if r_req then
@@ -573,7 +637,7 @@ begin
 
             end if;
 
-          when "101" =>
+          when "0101" =>
             -- r_addr = 000000000000000000000000000101--
 
             if r_req then
@@ -608,6 +672,482 @@ begin
 
             end if;
 
+          when "0110" =>
+            -- r_addr = 000000000000000000000000000110--
+
+            if r_req then
+
+              -- Clear holding register location prior to read.
+              r_hold := (others => '0');
+
+            end if;
+
+            -- Read logic for field CA0: CA0.
+
+            if r_req then
+              tmp_data8 := r_hold(7 downto 0);
+            end if;
+            if r_req then
+
+              -- Regular access logic. Read mode: enabled.
+              tmp_data8 := f_CA_r((0)).d;
+              r_ack := true;
+
+            end if;
+            if r_req then
+              r_hold(7 downto 0) := tmp_data8;
+            end if;
+
+            -- Read logic for field CA1: CA1.
+
+            if r_req then
+              tmp_data8 := r_hold(15 downto 8);
+            end if;
+            if r_req then
+
+              -- Regular access logic. Read mode: enabled.
+              tmp_data8 := f_CA_r((1)).d;
+              r_ack := true;
+
+            end if;
+            if r_req then
+              r_hold(15 downto 8) := tmp_data8;
+            end if;
+
+            -- Read logic for field CA2: CA2.
+
+            if r_req then
+              tmp_data8 := r_hold(23 downto 16);
+            end if;
+            if r_req then
+
+              -- Regular access logic. Read mode: enabled.
+              tmp_data8 := f_CA_r((2)).d;
+              r_ack := true;
+
+            end if;
+            if r_req then
+              r_hold(23 downto 16) := tmp_data8;
+            end if;
+
+            -- Read logic for field CA3: CA3.
+
+            if r_req then
+              tmp_data8 := r_hold(31 downto 24);
+            end if;
+            if r_req then
+
+              -- Regular access logic. Read mode: enabled.
+              tmp_data8 := f_CA_r((3)).d;
+              r_ack := true;
+
+            end if;
+            if r_req then
+              r_hold(31 downto 24) := tmp_data8;
+            end if;
+
+            -- Read logic for field CA4: CA4.
+
+            if r_req then
+              tmp_data8 := r_hold(39 downto 32);
+            end if;
+            if r_req then
+
+              -- Regular access logic. Read mode: enabled.
+              tmp_data8 := f_CA_r((4)).d;
+              r_ack := true;
+
+            end if;
+            if r_req then
+              r_hold(39 downto 32) := tmp_data8;
+            end if;
+
+            -- Read logic for field CA5: CA5.
+
+            if r_req then
+              tmp_data8 := r_hold(47 downto 40);
+            end if;
+            if r_req then
+
+              -- Regular access logic. Read mode: enabled.
+              tmp_data8 := f_CA_r((5)).d;
+              r_ack := true;
+
+            end if;
+            if r_req then
+              r_hold(47 downto 40) := tmp_data8;
+            end if;
+
+            -- Read logic for field CA6: CA6.
+
+            if r_req then
+              tmp_data8 := r_hold(55 downto 48);
+            end if;
+            if r_req then
+
+              -- Regular access logic. Read mode: enabled.
+              tmp_data8 := f_CA_r((6)).d;
+              r_ack := true;
+
+            end if;
+            if r_req then
+              r_hold(55 downto 48) := tmp_data8;
+            end if;
+
+            -- Read logic for field CA7: CA7.
+
+            if r_req then
+              tmp_data8 := r_hold(63 downto 56);
+            end if;
+            if r_req then
+
+              -- Regular access logic. Read mode: enabled.
+              tmp_data8 := f_CA_r((7)).d;
+              r_ack := true;
+
+            end if;
+            if r_req then
+              r_hold(63 downto 56) := tmp_data8;
+            end if;
+
+            -- Read logic for field CA8: CA8.
+
+            if r_req then
+              tmp_data8 := r_hold(71 downto 64);
+            end if;
+            if r_req then
+
+              -- Regular access logic. Read mode: enabled.
+              tmp_data8 := f_CA_r((8)).d;
+              r_ack := true;
+
+            end if;
+            if r_req then
+              r_hold(71 downto 64) := tmp_data8;
+            end if;
+
+            -- Read logic for field CA9: CA9.
+
+            if r_req then
+              tmp_data8 := r_hold(79 downto 72);
+            end if;
+            if r_req then
+
+              -- Regular access logic. Read mode: enabled.
+              tmp_data8 := f_CA_r((9)).d;
+              r_ack := true;
+
+            end if;
+            if r_req then
+              r_hold(79 downto 72) := tmp_data8;
+            end if;
+
+            -- Read logic for block CA0_reg_a: block containing bits 31..0 of
+            -- register `CA0_reg` (`CA0`).
+            if r_req then
+
+              r_data := r_hold(31 downto 0);
+              r_multi := '1';
+
+            end if;
+
+          when "0111" =>
+            -- r_addr = 000000000000000000000000000111--
+
+            -- Read logic for block CA0_reg_b: block containing bits 63..32 of
+            -- register `CA0_reg` (`CA0`).
+            if r_req then
+
+              r_data := r_hold(63 downto 32);
+              if r_multi = '1' then
+                r_ack := true;
+              else
+                r_nack := true;
+              end if;
+
+            end if;
+
+          when "1000" =>
+            -- r_addr = 000000000000000000000000001000--
+
+            -- Read logic for block CA0_reg_c: block containing bits 95..64 of
+            -- register `CA0_reg` (`CA0`).
+            if r_req then
+
+              r_data := r_hold(95 downto 64);
+              if r_multi = '1' then
+                r_ack := true;
+              else
+                r_nack := true;
+              end if;
+              r_multi := '0';
+
+            end if;
+
+          when "1001" =>
+            -- r_addr = 000000000000000000000000001001--
+
+            if r_req then
+
+              -- Clear holding register location prior to read.
+              r_hold := (others => '0');
+
+            end if;
+
+            -- Read logic for field SA0: SA0.
+
+            if r_req then
+              tmp_data8 := r_hold(7 downto 0);
+            end if;
+            if r_req then
+
+              -- Regular access logic. Read mode: enabled.
+              tmp_data8 := f_SA_r((0)).d;
+              r_ack := true;
+
+            end if;
+            if r_req then
+              r_hold(7 downto 0) := tmp_data8;
+            end if;
+
+            -- Read logic for field SA1: SA1.
+
+            if r_req then
+              tmp_data8 := r_hold(15 downto 8);
+            end if;
+            if r_req then
+
+              -- Regular access logic. Read mode: enabled.
+              tmp_data8 := f_SA_r((1)).d;
+              r_ack := true;
+
+            end if;
+            if r_req then
+              r_hold(15 downto 8) := tmp_data8;
+            end if;
+
+            -- Read logic for field SA2: SA2.
+
+            if r_req then
+              tmp_data8 := r_hold(23 downto 16);
+            end if;
+            if r_req then
+
+              -- Regular access logic. Read mode: enabled.
+              tmp_data8 := f_SA_r((2)).d;
+              r_ack := true;
+
+            end if;
+            if r_req then
+              r_hold(23 downto 16) := tmp_data8;
+            end if;
+
+            -- Read logic for field SA3: SA3.
+
+            if r_req then
+              tmp_data8 := r_hold(31 downto 24);
+            end if;
+            if r_req then
+
+              -- Regular access logic. Read mode: enabled.
+              tmp_data8 := f_SA_r((3)).d;
+              r_ack := true;
+
+            end if;
+            if r_req then
+              r_hold(31 downto 24) := tmp_data8;
+            end if;
+
+            -- Read logic for field SA4: SA4.
+
+            if r_req then
+              tmp_data8 := r_hold(39 downto 32);
+            end if;
+            if r_req then
+
+              -- Regular access logic. Read mode: enabled.
+              tmp_data8 := f_SA_r((4)).d;
+              r_ack := true;
+
+            end if;
+            if r_req then
+              r_hold(39 downto 32) := tmp_data8;
+            end if;
+
+            -- Read logic for field SA5: SA5.
+
+            if r_req then
+              tmp_data8 := r_hold(47 downto 40);
+            end if;
+            if r_req then
+
+              -- Regular access logic. Read mode: enabled.
+              tmp_data8 := f_SA_r((5)).d;
+              r_ack := true;
+
+            end if;
+            if r_req then
+              r_hold(47 downto 40) := tmp_data8;
+            end if;
+
+            -- Read logic for field SA6: SA6.
+
+            if r_req then
+              tmp_data8 := r_hold(55 downto 48);
+            end if;
+            if r_req then
+
+              -- Regular access logic. Read mode: enabled.
+              tmp_data8 := f_SA_r((6)).d;
+              r_ack := true;
+
+            end if;
+            if r_req then
+              r_hold(55 downto 48) := tmp_data8;
+            end if;
+
+            -- Read logic for field SA7: SA7.
+
+            if r_req then
+              tmp_data8 := r_hold(63 downto 56);
+            end if;
+            if r_req then
+
+              -- Regular access logic. Read mode: enabled.
+              tmp_data8 := f_SA_r((7)).d;
+              r_ack := true;
+
+            end if;
+            if r_req then
+              r_hold(63 downto 56) := tmp_data8;
+            end if;
+
+            -- Read logic for field SA8: SA8.
+
+            if r_req then
+              tmp_data8 := r_hold(71 downto 64);
+            end if;
+            if r_req then
+
+              -- Regular access logic. Read mode: enabled.
+              tmp_data8 := f_SA_r((8)).d;
+              r_ack := true;
+
+            end if;
+            if r_req then
+              r_hold(71 downto 64) := tmp_data8;
+            end if;
+
+            -- Read logic for field SA9: SA9.
+
+            if r_req then
+              tmp_data8 := r_hold(79 downto 72);
+            end if;
+            if r_req then
+
+              -- Regular access logic. Read mode: enabled.
+              tmp_data8 := f_SA_r((9)).d;
+              r_ack := true;
+
+            end if;
+            if r_req then
+              r_hold(79 downto 72) := tmp_data8;
+            end if;
+
+            -- Read logic for block SA0_reg_a: block containing bits 31..0 of
+            -- register `SA0_reg` (`SA0`).
+            if r_req then
+
+              r_data := r_hold(31 downto 0);
+              r_multi := '1';
+
+            end if;
+
+          when "1010" =>
+            -- r_addr = 000000000000000000000000001010--
+
+            -- Read logic for block SA0_reg_b: block containing bits 63..32 of
+            -- register `SA0_reg` (`SA0`).
+            if r_req then
+
+              r_data := r_hold(63 downto 32);
+              if r_multi = '1' then
+                r_ack := true;
+              else
+                r_nack := true;
+              end if;
+
+            end if;
+
+          when "1011" =>
+            -- r_addr = 000000000000000000000000001011--
+
+            -- Read logic for block SA0_reg_c: block containing bits 95..64 of
+            -- register `SA0_reg` (`SA0`).
+            if r_req then
+
+              r_data := r_hold(95 downto 64);
+              if r_multi = '1' then
+                r_ack := true;
+              else
+                r_nack := true;
+              end if;
+              r_multi := '0';
+
+            end if;
+
+          when "1100" =>
+            -- r_addr = 000000000000000000000000001100--
+
+            if r_req then
+
+              -- Clear holding register location prior to read.
+              r_hold := (others => '0');
+
+            end if;
+
+            -- Read logic for field Counter: Counter.
+
+            if r_req then
+              tmp_data34 := r_hold(33 downto 0);
+            end if;
+            if r_req then
+
+              -- Regular access logic. Read mode: enabled.
+              tmp_data34 := f_Counter_r((0)).d;
+              r_ack := true;
+
+            end if;
+            if r_req then
+              r_hold(33 downto 0) := tmp_data34;
+            end if;
+
+            -- Read logic for block Counter_reg_low: block containing bits 31..0
+            -- of register `Counter_reg` (`COUNTER`).
+            if r_req then
+
+              r_data := r_hold(31 downto 0);
+              r_multi := '1';
+
+            end if;
+
+          when "1101" =>
+            -- r_addr = 000000000000000000000000001101--
+
+            -- Read logic for block Counter_reg_high: block containing bits
+            -- 63..32 of register `Counter_reg` (`COUNTER`).
+            if r_req then
+
+              r_data := r_hold(63 downto 32);
+              if r_multi = '1' then
+                r_ack := true;
+              else
+                r_nack := true;
+              end if;
+              r_multi := '0';
+
+            end if;
+
           when others =>
             null;
         end case;
@@ -621,9 +1161,9 @@ begin
       subaddr_none(0) := '0';
 
       -- Write address decoder.
-      if w_addr(31 downto 4) = "0000000000000000000000000000" then
-        case w_addr(3 downto 2) is
-          when "00" =>
+      if w_addr(31 downto 6) = "00000000000000000000000000" then
+        case w_addr(5 downto 2) is
+          when "0000" =>
             -- w_addr = 000000000000000000000000000000--
 
             -- Write logic for block C1_reg: block containing bits 31..0 of
@@ -647,7 +1187,7 @@ begin
 
             end if;
 
-          when "01" =>
+          when "0001" =>
             -- w_addr = 000000000000000000000000000001--
 
             -- Write logic for block C2_reg: block containing bits 31..0 of
@@ -671,7 +1211,7 @@ begin
 
             end if;
 
-          when "10" =>
+          when "0010" =>
             -- w_addr = 000000000000000000000000000010--
 
             -- Write logic for block C3_reg: block containing bits 31..0 of
@@ -691,6 +1231,175 @@ begin
               -- Regular access logic. Write mode: masked.
 
               f_C3_r((0)).d := (f_C3_r((0)).d and not tmp_strb12) or tmp_data12;
+              w_ack := true;
+
+            end if;
+
+          when "0110" =>
+            -- w_addr = 000000000000000000000000000110--
+
+            -- Write logic for block CA0_reg_a: block containing bits 31..0 of
+            -- register `CA0_reg` (`CA0`).
+            if w_req or w_lreq then
+              w_hold(31 downto 0) := w_data;
+              w_hstb(31 downto 0) := w_strb;
+              w_multi := '1';
+            end if;
+            if w_req then
+              w_ack := true;
+            end if;
+
+          when "0111" =>
+            -- w_addr = 000000000000000000000000000111--
+
+            -- Write logic for block CA0_reg_b: block containing bits 63..32 of
+            -- register `CA0_reg` (`CA0`).
+            if w_req or w_lreq then
+              w_hold(63 downto 32) := w_data;
+              w_hstb(63 downto 32) := w_strb;
+              w_multi := '1';
+            end if;
+            if w_req then
+              w_ack := true;
+            end if;
+
+          when "1000" =>
+            -- w_addr = 000000000000000000000000001000--
+
+            -- Write logic for block CA0_reg_c: block containing bits 95..64 of
+            -- register `CA0_reg` (`CA0`).
+            if w_req or w_lreq then
+              w_hold(95 downto 64) := w_data;
+              w_hstb(95 downto 64) := w_strb;
+              w_multi := '0';
+            end if;
+
+            -- Write logic for field CA0: CA0.
+
+            tmp_data8 := w_hold(7 downto 0);
+            tmp_strb8 := w_hstb(7 downto 0);
+            if w_req then
+
+              -- Regular access logic. Write mode: masked.
+
+              f_CA_r((0)).d := (f_CA_r((0)).d and not tmp_strb8) or tmp_data8;
+              w_ack := true;
+
+            end if;
+
+            -- Write logic for field CA1: CA1.
+
+            tmp_data8 := w_hold(15 downto 8);
+            tmp_strb8 := w_hstb(15 downto 8);
+            if w_req then
+
+              -- Regular access logic. Write mode: masked.
+
+              f_CA_r((1)).d := (f_CA_r((1)).d and not tmp_strb8) or tmp_data8;
+              w_ack := true;
+
+            end if;
+
+            -- Write logic for field CA2: CA2.
+
+            tmp_data8 := w_hold(23 downto 16);
+            tmp_strb8 := w_hstb(23 downto 16);
+            if w_req then
+
+              -- Regular access logic. Write mode: masked.
+
+              f_CA_r((2)).d := (f_CA_r((2)).d and not tmp_strb8) or tmp_data8;
+              w_ack := true;
+
+            end if;
+
+            -- Write logic for field CA3: CA3.
+
+            tmp_data8 := w_hold(31 downto 24);
+            tmp_strb8 := w_hstb(31 downto 24);
+            if w_req then
+
+              -- Regular access logic. Write mode: masked.
+
+              f_CA_r((3)).d := (f_CA_r((3)).d and not tmp_strb8) or tmp_data8;
+              w_ack := true;
+
+            end if;
+
+            -- Write logic for field CA4: CA4.
+
+            tmp_data8 := w_hold(39 downto 32);
+            tmp_strb8 := w_hstb(39 downto 32);
+            if w_req then
+
+              -- Regular access logic. Write mode: masked.
+
+              f_CA_r((4)).d := (f_CA_r((4)).d and not tmp_strb8) or tmp_data8;
+              w_ack := true;
+
+            end if;
+
+            -- Write logic for field CA5: CA5.
+
+            tmp_data8 := w_hold(47 downto 40);
+            tmp_strb8 := w_hstb(47 downto 40);
+            if w_req then
+
+              -- Regular access logic. Write mode: masked.
+
+              f_CA_r((5)).d := (f_CA_r((5)).d and not tmp_strb8) or tmp_data8;
+              w_ack := true;
+
+            end if;
+
+            -- Write logic for field CA6: CA6.
+
+            tmp_data8 := w_hold(55 downto 48);
+            tmp_strb8 := w_hstb(55 downto 48);
+            if w_req then
+
+              -- Regular access logic. Write mode: masked.
+
+              f_CA_r((6)).d := (f_CA_r((6)).d and not tmp_strb8) or tmp_data8;
+              w_ack := true;
+
+            end if;
+
+            -- Write logic for field CA7: CA7.
+
+            tmp_data8 := w_hold(63 downto 56);
+            tmp_strb8 := w_hstb(63 downto 56);
+            if w_req then
+
+              -- Regular access logic. Write mode: masked.
+
+              f_CA_r((7)).d := (f_CA_r((7)).d and not tmp_strb8) or tmp_data8;
+              w_ack := true;
+
+            end if;
+
+            -- Write logic for field CA8: CA8.
+
+            tmp_data8 := w_hold(71 downto 64);
+            tmp_strb8 := w_hstb(71 downto 64);
+            if w_req then
+
+              -- Regular access logic. Write mode: masked.
+
+              f_CA_r((8)).d := (f_CA_r((8)).d and not tmp_strb8) or tmp_data8;
+              w_ack := true;
+
+            end if;
+
+            -- Write logic for field CA9: CA9.
+
+            tmp_data8 := w_hold(79 downto 72);
+            tmp_strb8 := w_hstb(79 downto 72);
+            if w_req then
+
+              -- Regular access logic. Write mode: masked.
+
+              f_CA_r((9)).d := (f_CA_r((9)).d and not tmp_strb8) or tmp_data8;
               w_ack := true;
 
             end if;
@@ -733,6 +1442,19 @@ begin
       end if;
       -- Assign the read outputs for field C3.
       f_C3_o.data <= f_C3_r((0)).d;
+
+      -- Post-bus logic for field group CA: CA.
+      for i in 0 to 9 loop
+
+        -- Handle reset for field CA.
+        if reset = '1' then
+          f_CA_r((i)).d := (others => '0');
+          f_CA_r((i)).v := '0';
+        end if;
+        -- Assign the read outputs for field CA.
+        f_CA_o((i)).data <= f_CA_r((i)).d;
+
+      end loop;
 
       -------------------------------------------------------------------------
       -- Boilerplate bus access logic
