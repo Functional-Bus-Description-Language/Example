@@ -43,6 +43,9 @@ entity Main is
     -- Interface for field Counter: Counter.
     f_Counter_i : in Main_f_Counter_i_type := MAIN_F_COUNTER_I_RESET;
 
+    -- Interface for field Mask: Mask.
+    f_Mask_i : in Main_f_Mask_i_type := MAIN_F_MASK_I_RESET;
+
     -- AXI4-lite + interrupt request bus to the master.
     bus_i : in  axi4l32_m2s_type := AXI4L32_M2S_RESET;
     bus_o : out axi4l32_s2m_type := AXI4L32_S2M_RESET
@@ -325,6 +328,31 @@ begin
     variable f_Counter_r : f_Counter_r_array(0 to 0)
         := (others => F_COUNTER_R_RESET);
 
+    -- Private declarations for field Mask: Mask.
+    type f_Mask_r_type is record
+      d : std_logic_vector(15 downto 0);
+      v : std_logic;
+    end record;
+    constant F_MASK_R_RESET : f_Mask_r_type := (
+      d => (others => '0'),
+      v => '0'
+    );
+    type f_Mask_r_array is array (natural range <>) of f_Mask_r_type;
+    variable f_Mask_r : f_Mask_r_array(0 to 0) := (others => F_MASK_R_RESET);
+
+    -- Private declarations for field Version: Version.
+    type f_Version_r_type is record
+      d : std_logic_vector(23 downto 0);
+      v : std_logic;
+    end record;
+    constant F_VERSION_R_RESET : f_Version_r_type := (
+      d => (others => '0'),
+      v => '0'
+    );
+    type f_Version_r_array is array (natural range <>) of f_Version_r_type;
+    variable f_Version_r : f_Version_r_array(0 to 0)
+        := (others => F_VERSION_R_RESET);
+
     -- Temporary variables for the field templates.
     variable tmp_data7   : std_logic_vector(6 downto 0);
     variable tmp_strb7   : std_logic_vector(6 downto 0);
@@ -334,6 +362,8 @@ begin
     variable tmp_strb9   : std_logic_vector(8 downto 0);
     variable tmp_data12  : std_logic_vector(11 downto 0);
     variable tmp_strb12  : std_logic_vector(11 downto 0);
+    variable tmp_data16  : std_logic_vector(15 downto 0);
+    variable tmp_data24  : std_logic_vector(23 downto 0);
     variable tmp_data34  : std_logic_vector(33 downto 0);
 
   begin
@@ -452,6 +482,12 @@ begin
       f_Counter_r((0)).d := f_Counter_i.write_data;
       f_Counter_r((0)).v := '1';
 
+      -- Pre-bus logic for field Mask: Mask.
+
+      -- Handle hardware write for field Mask: status.
+      f_Mask_r((0)).d := f_Mask_i.write_data;
+      f_Mask_r((0)).v := '1';
+
       -------------------------------------------------------------------------
       -- Bus read logic
       -------------------------------------------------------------------------
@@ -460,9 +496,9 @@ begin
       subaddr_none(0) := '0';
 
       -- Read address decoder.
-      if r_addr(31 downto 6) = "00000000000000000000000000" then
-        case r_addr(5 downto 2) is
-          when "0000" =>
+      if r_addr(31 downto 7) = "0000000000000000000000000" then
+        case r_addr(6 downto 2) is
+          when "00000" =>
             -- r_addr = 000000000000000000000000000000--
 
             if r_req then
@@ -497,7 +533,7 @@ begin
 
             end if;
 
-          when "0001" =>
+          when "00001" =>
             -- r_addr = 000000000000000000000000000001--
 
             if r_req then
@@ -532,7 +568,7 @@ begin
 
             end if;
 
-          when "0010" =>
+          when "00010" =>
             -- r_addr = 000000000000000000000000000010--
 
             if r_req then
@@ -567,7 +603,7 @@ begin
 
             end if;
 
-          when "0011" =>
+          when "00011" =>
             -- r_addr = 000000000000000000000000000011--
 
             if r_req then
@@ -602,7 +638,7 @@ begin
 
             end if;
 
-          when "0100" =>
+          when "00100" =>
             -- r_addr = 000000000000000000000000000100--
 
             if r_req then
@@ -637,7 +673,7 @@ begin
 
             end if;
 
-          when "0101" =>
+          when "00101" =>
             -- r_addr = 000000000000000000000000000101--
 
             if r_req then
@@ -672,7 +708,7 @@ begin
 
             end if;
 
-          when "0110" =>
+          when "00110" =>
             -- r_addr = 000000000000000000000000000110--
 
             if r_req then
@@ -851,7 +887,7 @@ begin
 
             end if;
 
-          when "0111" =>
+          when "00111" =>
             -- r_addr = 000000000000000000000000000111--
 
             -- Read logic for block CA0_reg_b: block containing bits 63..32 of
@@ -867,7 +903,7 @@ begin
 
             end if;
 
-          when "1000" =>
+          when "01000" =>
             -- r_addr = 000000000000000000000000001000--
 
             -- Read logic for block CA0_reg_c: block containing bits 95..64 of
@@ -884,7 +920,7 @@ begin
 
             end if;
 
-          when "1001" =>
+          when "01001" =>
             -- r_addr = 000000000000000000000000001001--
 
             if r_req then
@@ -1063,7 +1099,7 @@ begin
 
             end if;
 
-          when "1010" =>
+          when "01010" =>
             -- r_addr = 000000000000000000000000001010--
 
             -- Read logic for block SA0_reg_b: block containing bits 63..32 of
@@ -1079,7 +1115,7 @@ begin
 
             end if;
 
-          when "1011" =>
+          when "01011" =>
             -- r_addr = 000000000000000000000000001011--
 
             -- Read logic for block SA0_reg_c: block containing bits 95..64 of
@@ -1096,7 +1132,7 @@ begin
 
             end if;
 
-          when "1100" =>
+          when "01100" =>
             -- r_addr = 000000000000000000000000001100--
 
             if r_req then
@@ -1131,7 +1167,7 @@ begin
 
             end if;
 
-          when "1101" =>
+          when "01101" =>
             -- r_addr = 000000000000000000000000001101--
 
             -- Read logic for block Counter_reg_high: block containing bits
@@ -1144,6 +1180,76 @@ begin
               else
                 r_nack := true;
               end if;
+              r_multi := '0';
+
+            end if;
+
+          when "01111" =>
+            -- r_addr = 000000000000000000000000001111--
+
+            if r_req then
+
+              -- Clear holding register location prior to read.
+              r_hold := (others => '0');
+
+            end if;
+
+            -- Read logic for field Mask: Mask.
+
+            if r_req then
+              tmp_data16 := r_hold(15 downto 0);
+            end if;
+            if r_req then
+
+              -- Regular access logic. Read mode: enabled.
+              tmp_data16 := f_Mask_r((0)).d;
+              r_ack := true;
+
+            end if;
+            if r_req then
+              r_hold(15 downto 0) := tmp_data16;
+            end if;
+
+            -- Read logic for block Mask_reg: block containing bits 31..0 of
+            -- register `Mask_reg` (`MASK`).
+            if r_req then
+
+              r_data := r_hold(31 downto 0);
+              r_multi := '0';
+
+            end if;
+
+          when "10000" =>
+            -- r_addr = 000000000000000000000000010000--
+
+            if r_req then
+
+              -- Clear holding register location prior to read.
+              r_hold := (others => '0');
+
+            end if;
+
+            -- Read logic for field Version: Version.
+
+            if r_req then
+              tmp_data24 := r_hold(23 downto 0);
+            end if;
+            if r_req then
+
+              -- Regular access logic. Read mode: enabled.
+              tmp_data24 := f_Version_r((0)).d;
+              r_ack := true;
+
+            end if;
+            if r_req then
+              r_hold(23 downto 0) := tmp_data24;
+            end if;
+
+            -- Read logic for block Version_reg: block containing bits 31..0 of
+            -- register `Version_reg` (`VERSION`).
+            if r_req then
+
+              r_data := r_hold(31 downto 0);
               r_multi := '0';
 
             end if;
@@ -1455,6 +1561,14 @@ begin
         f_CA_o((i)).data <= f_CA_r((i)).d;
 
       end loop;
+
+      -- Post-bus logic for field Version: Version.
+
+      -- Handle reset for field Version.
+      if reset = '1' then
+        f_Version_r((0)).d := "000000010000000100000010";
+        f_Version_r((0)).v := '1';
+      end if;
 
       -------------------------------------------------------------------------
       -- Boilerplate bus access logic

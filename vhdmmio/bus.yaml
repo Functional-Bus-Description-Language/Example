@@ -15,3 +15,6 @@ fields:
 
   # Atomowy dostęp, ale blokuje dostęp do slave'a pomiędzy dostępoami do rejestrów Counter'a.
   - { name: Counter, address: 0x30, behavior: status, bitrange: 33..0 }
+
+  - { name: Mask, address: 0x3C, behavior: control, bitrange: 15..0 }
+  - { name: Version, address: 0x40, behavior: constant, bitrange: 23..0, value: 0x010102 }
