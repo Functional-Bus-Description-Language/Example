@@ -1,0 +1,11 @@
+metadata:
+  name: Main
+
+fields:
+  - { name: C1, address: 0x0, behavior: control, bitrange: 6..0 }
+  - { name: C2, address: 0x4, behavior: control, bitrange: 8..0 }
+  - { name: C3, address: 0x8, behavior: control, bitrange: 11..0 }
+
+  - { name: S1, address: 0xC,  behavior: status, bitrange: 6..0 }
+  - { name: S2, address: 0x10, behavior: status, bitrange: 8..0 }
+  - { name: S3, address: 0x14, behavior: status, bitrange: 11..0 }
