@@ -1,0 +1,23 @@
+metadata:
+  name: Subblock
+
+fields:
+  - name: Add
+    address: 0x0
+    behavior: control
+    subfields:
+      - { name: A, bitrange: 19..0 }
+      - { name: B, bitrange: 29..20 }
+      - { name: C, bitrange: 37..30 }
+  - { name: AddStb, address: 0x8, behavior: strobe }
+  - { name: Sum, address: 0xC, behavior: status, bitrange: 20..0 }
+
+  # Nie można ponownie użyć nazw dla subfields.
+  - name: Add_Stream
+    address: 0x10
+    behavior: mmio-to-stream
+    subfields:
+      - {name: AS, bitrange: 19..0 }
+      - {name: BS, bitrange: 29..20 }
+      - {name: CS, bitrange: 37..30 }
+  - { name: Sum_Stream, address: 0x18, behavior: stream-to-mmio, bitrange: 20..0 }

@@ -1,3 +1,4 @@
 #!/bin/sh
 set -e
-vhdmmio bus.yaml -V vhdl
+vhdmmio main.yaml -V vhdl
+vhdmmio subblock.yaml -V vhdl

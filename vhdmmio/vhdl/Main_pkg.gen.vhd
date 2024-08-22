@@ -67,11 +67,11 @@ package Main_pkg is
   constant MAIN_F_COUNTER_I_RESET : Main_f_Counter_i_type := (
     write_data => (others => '0')
   );
-  type Main_f_Mask_i_type is record
-    write_data : std_logic_vector(15 downto 0);
+  type Main_f_Mask_o_type is record
+    data : std_logic_vector(15 downto 0);
   end record;
-  constant MAIN_F_MASK_I_RESET : Main_f_Mask_i_type := (
-    write_data => (others => '0')
+  constant MAIN_F_MASK_O_RESET : Main_f_Mask_o_type := (
+    data => (others => '0')
   );
 
   -- Component declaration for Main.
@@ -110,7 +110,7 @@ package Main_pkg is
       f_Counter_i : in Main_f_Counter_i_type := MAIN_F_COUNTER_I_RESET;
 
       -- Interface for field Mask: Mask.
-      f_Mask_i : in Main_f_Mask_i_type := MAIN_F_MASK_I_RESET;
+      f_Mask_o : out Main_f_Mask_o_type := MAIN_F_MASK_O_RESET;
 
       -- AXI4-lite + interrupt request bus to the master.
       bus_i : in  axi4l32_m2s_type := AXI4L32_M2S_RESET;

@@ -44,7 +44,7 @@ entity Main is
     f_Counter_i : in Main_f_Counter_i_type := MAIN_F_COUNTER_I_RESET;
 
     -- Interface for field Mask: Mask.
-    f_Mask_i : in Main_f_Mask_i_type := MAIN_F_MASK_I_RESET;
+    f_Mask_o : out Main_f_Mask_o_type := MAIN_F_MASK_O_RESET;
 
     -- AXI4-lite + interrupt request bus to the master.
     bus_i : in  axi4l32_m2s_type := AXI4L32_M2S_RESET;
@@ -363,6 +363,7 @@ begin
     variable tmp_data12  : std_logic_vector(11 downto 0);
     variable tmp_strb12  : std_logic_vector(11 downto 0);
     variable tmp_data16  : std_logic_vector(15 downto 0);
+    variable tmp_strb16  : std_logic_vector(15 downto 0);
     variable tmp_data24  : std_logic_vector(23 downto 0);
     variable tmp_data34  : std_logic_vector(33 downto 0);
 
@@ -481,12 +482,6 @@ begin
       -- Handle hardware write for field Counter: status.
       f_Counter_r((0)).d := f_Counter_i.write_data;
       f_Counter_r((0)).v := '1';
-
-      -- Pre-bus logic for field Mask: Mask.
-
-      -- Handle hardware write for field Mask: status.
-      f_Mask_r((0)).d := f_Mask_i.write_data;
-      f_Mask_r((0)).v := '1';
 
       -------------------------------------------------------------------------
       -- Bus read logic
@@ -1510,6 +1505,31 @@ begin
 
             end if;
 
+          when "1111" =>
+            -- w_addr = 000000000000000000000000001111--
+
+            -- Write logic for block Mask_reg: block containing bits 31..0 of
+            -- register `Mask_reg` (`MASK`).
+            if w_req or w_lreq then
+              w_hold(31 downto 0) := w_data;
+              w_hstb(31 downto 0) := w_strb;
+              w_multi := '0';
+            end if;
+
+            -- Write logic for field Mask: Mask.
+
+            tmp_data16 := w_hold(15 downto 0);
+            tmp_strb16 := w_hstb(15 downto 0);
+            if w_req then
+
+              -- Regular access logic. Write mode: masked.
+
+              f_Mask_r((0)).d := (f_Mask_r((0)).d and not tmp_strb16)
+                  or tmp_data16;
+              w_ack := true;
+
+            end if;
+
           when others =>
             null;
         end case;
@@ -1561,6 +1581,16 @@ begin
         f_CA_o((i)).data <= f_CA_r((i)).d;
 
       end loop;
+
+      -- Post-bus logic for field Mask: Mask.
+
+      -- Handle reset for field Mask.
+      if reset = '1' then
+        f_Mask_r((0)).d := (others => '0');
+        f_Mask_r((0)).v := '0';
+      end if;
+      -- Assign the read outputs for field Mask.
+      f_Mask_o.data <= f_Mask_r((0)).d;
 
       -- Post-bus logic for field Version: Version.
 
