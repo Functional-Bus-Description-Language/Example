@@ -5,11 +5,12 @@ fields:
   - name: Add
     address: 0x0
     behavior: control
+    group: Add
     subfields:
       - { name: A, bitrange: 19..0 }
       - { name: B, bitrange: 29..20 }
       - { name: C, bitrange: 37..30 }
-  - { name: AddStb, address: 0x8, behavior: strobe }
+  - { name: AddStb, address: 0x8, behavior: strobe, group: Add}
   - { name: Sum, address: 0xC, behavior: status, bitrange: 20..0 }
 
   # Nie można ponownie użyć nazw dla subfields.

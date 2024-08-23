@@ -16,17 +16,12 @@ entity Subblock is
     clk : in std_logic;
     reset : in std_logic := '0';
 
-    -- Interface for field A: A.
-    f_A_o : out Subblock_f_A_o_type := SUBBLOCK_F_A_O_RESET;
-
-    -- Interface for field B: B.
-    f_B_o : out Subblock_f_B_o_type := SUBBLOCK_F_B_O_RESET;
-
-    -- Interface for field C: C.
-    f_C_o : out Subblock_f_C_o_type := SUBBLOCK_F_C_O_RESET;
-
-    -- Interface for field AddStb: AddStb.
-    f_AddStb_o : out Subblock_f_AddStb_o_type := SUBBLOCK_F_ADDSTB_O_RESET;
+    -- Interface group for:
+    --  - field A: A.
+    --  - field AddStb: AddStb.
+    --  - field B: B.
+    --  - field C: C.
+    g_Add_o : out subblock_g_add_o_type := SUBBLOCK_G_ADD_O_RESET;
 
     -- Interface for field Sum: Sum.
     f_Sum_i : in Subblock_f_Sum_i_type := SUBBLOCK_F_SUM_I_RESET;
@@ -857,7 +852,7 @@ begin
         f_A_r((0)).v := '0';
       end if;
       -- Assign the read outputs for field A.
-      f_A_o.data <= f_A_r((0)).d;
+      g_Add_o.f_A.data <= f_A_r((0)).d;
 
       -- Post-bus logic for field B: B.
 
@@ -867,7 +862,7 @@ begin
         f_B_r((0)).v := '0';
       end if;
       -- Assign the read outputs for field B.
-      f_B_o.data <= f_B_r((0)).d;
+      g_Add_o.f_B.data <= f_B_r((0)).d;
 
       -- Post-bus logic for field C: C.
 
@@ -877,7 +872,7 @@ begin
         f_C_r((0)).v := '0';
       end if;
       -- Assign the read outputs for field C.
-      f_C_o.data <= f_C_r((0)).d;
+      g_Add_o.f_C.data <= f_C_r((0)).d;
 
       -- Post-bus logic for field AddStb: AddStb.
 
@@ -888,7 +883,7 @@ begin
         f_AddStb_r((0)).inval := '0';
       end if;
       -- Assign the read outputs for field AddStb.
-      f_AddStb_o.data <= f_AddStb_r((0)).d;
+      g_Add_o.f_AddStb.data <= f_AddStb_r((0)).d;
 
       -- Post-bus logic for field AS: AS.
 

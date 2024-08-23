@@ -35,6 +35,18 @@ package Subblock_pkg is
   constant SUBBLOCK_F_ADDSTB_O_RESET : Subblock_f_AddStb_o_type := (
     data => (others => '0')
   );
+  type subblock_g_add_o_type is record
+    f_A : Subblock_f_A_o_type;
+    f_B : Subblock_f_B_o_type;
+    f_C : Subblock_f_C_o_type;
+    f_AddStb : Subblock_f_AddStb_o_type;
+  end record;
+  constant SUBBLOCK_G_ADD_O_RESET : subblock_g_add_o_type := (
+    f_A => SUBBLOCK_F_A_O_RESET,
+    f_B => SUBBLOCK_F_B_O_RESET,
+    f_C => SUBBLOCK_F_C_O_RESET,
+    f_AddStb => SUBBLOCK_F_ADDSTB_O_RESET
+  );
   type Subblock_f_Sum_i_type is record
     write_data : std_logic_vector(20 downto 0);
   end record;
@@ -106,17 +118,12 @@ package Subblock_pkg is
       clk : in std_logic;
       reset : in std_logic := '0';
 
-      -- Interface for field A: A.
-      f_A_o : out Subblock_f_A_o_type := SUBBLOCK_F_A_O_RESET;
-
-      -- Interface for field B: B.
-      f_B_o : out Subblock_f_B_o_type := SUBBLOCK_F_B_O_RESET;
-
-      -- Interface for field C: C.
-      f_C_o : out Subblock_f_C_o_type := SUBBLOCK_F_C_O_RESET;
-
-      -- Interface for field AddStb: AddStb.
-      f_AddStb_o : out Subblock_f_AddStb_o_type := SUBBLOCK_F_ADDSTB_O_RESET;
+      -- Interface group for:
+      --  - field A: A.
+      --  - field AddStb: AddStb.
+      --  - field B: B.
+      --  - field C: C.
+      g_Add_o : out subblock_g_add_o_type := SUBBLOCK_G_ADD_O_RESET;
 
       -- Interface for field Sum: Sum.
       f_Sum_i : in Subblock_f_Sum_i_type := SUBBLOCK_F_SUM_I_RESET;
