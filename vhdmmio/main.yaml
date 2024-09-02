@@ -18,7 +18,7 @@ fields:
   - { name: CA, address: 0x18, behavior: control, bitrange: 7..0, repeat: 10}
   - { name: SA, address: 0x24, behavior: status,  bitrange: 7..0, repeat: 10}
 
-  # Atomowy dostęp, ale blokuje dostęp do slave'a pomiędzy dostępoami do rejestrów Counter'a.
+  # Atomowy dostęp, ale blokuje dostęp do slave'a pomiędzy dostępami do rejestrów Counter'a.
   - { name: Counter, address: 0x30, behavior: status, bitrange: 33..0 }
 
   - { name: Mask, address: 0x3C, behavior: control, bitrange: 15..0 }
